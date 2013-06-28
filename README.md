@@ -33,10 +33,10 @@ where his guests will find them.
 Alice, after finding one of Bob's invitations, goes to a key provider of her choice.
 Let's say that Namecoin(tm) is her choice key provider.  Namecoin(tm) gives Alice
 her own special printer, and puts a "public key" for Alice on record.
-Alice's printer is uniquely designed to print in a secret code that can only be
-translated using the public key Namecoin(tm) puts on record.
+Alice's printer is uniquely desgined to print things in a scrambled code.  The scramble
+can only be deciphered using the public key that Namecoin(tm) has on record.
 
-Only Alice's Namecoin(tm) printer is able to print things using Alice's secret code.
+Only Alice's Namecoin(tm) printer is able to print Alice's unique scramble.
 It will act as Alice's "private key" that she can use to create badges.  Alice needs
 to keep her printer safe and secret because if someone should steal it, they can
 print all the "Alice at Namecoin(tm)" badges they want.
