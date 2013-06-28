@@ -73,29 +73,27 @@ any other party she receives an invitation to.
 Terms Used
 ==========
 
-*Guest* / Client:
+**Guest** / *Client*:
 Someone who wants to be uniquely identified at a server / party.
 
-*Party* / Server:
+**Party** / *Server*:
 A gathering requiring uniquely identifiable guests.  This could be a
 multiplayer game server, for example.
 
-*Token* / Invitation Token:
+**Token** / *Invitation Token*:
 A unique, base64 encoded string provided to guests.  The token need not be specific
 to a guest.  A party should store a token it has distributed until that token
 is presented in a verified badge.  Every token should be unique.  A badge is not
 valid for verification if its token is on a previously verified badge.
 
-*Badge*:
+**Badge**:
 The response, from a guest, to a party's invitation token.  It includes all
 the information necessary to uniquely identify the guest, their invitation, and
 verify their identity with a public key store of the guest's choosing.
 
-*Public key store*:
+**Public key store**:
 Some publically available storage mechanism that maps names to public DSA keys.
 
-*Identity URI*:
+**Identity URI**:
 A guest's "name" for verification purposes.  This URI must resolve to the guest's
-
-
 
