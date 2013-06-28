@@ -111,9 +111,11 @@ Data Specification
 ==================
 
 **Badge**:
+
     < Identity URI >
     < Base64-encoded token >
     < Base64-encoded signature >
+
 *Note*: Each component string of a badge is delimited with a newline character.
 
 
