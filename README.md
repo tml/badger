@@ -3,7 +3,7 @@ Badger
 
 This document is a working draft describing a system for the creation and
 verification of unique identities using a public key store as authority.
-The mechanisms and storage types used are not in the scope of this system,
+The mechanisms of storage and transfer are not in the scope of this system,
 however the example library (in development) will use the
 [Namecoin blockchain](http://dot-bit.org/Main_Page) for key retrieval.
 
