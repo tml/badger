@@ -2,7 +2,10 @@ Badger
 ======
 
 This document describes a system for the creation and verification of unique
-identities using a public key store as authority.
+identities using a public key store as authority.  The mechanisms and storage types
+used are not in the scope of this system, however the example library
+(in development) will use the [Namecoin blockchain](http://dot-bit.org/Main_Page)
+for key retrieval.
 
 
 The Party
@@ -70,29 +73,29 @@ any other party she receives an invitation to.
 Terms Used
 ==========
 
-Client / Guest:
-        Someone who wants to be uniquely identified at a server / party.
+*Guest* / Client:
+Someone who wants to be uniquely identified at a server / party.
 
-Server / Party:
-        A gathering requiring uniquely identifiable guests.  This could be a multiplayer
-        game server, for example.
+*Party* / Server:
+A gathering requiring uniquely identifiable guests.  This could be a
+multiplayer game server, for example.
 
-Token / Invitation Token:
-        A unique, base64 encoded string provided to guests.  The token need not be specific
-        to a guest.  A party should store a token it has distributed until that token
-        is presented in a verified badge.  Every token should be unique.  A badge is not
-        valid for verification if its token is on different, verified badge.
+*Token* / Invitation Token:
+A unique, base64 encoded string provided to guests.  The token need not be specific
+to a guest.  A party should store a token it has distributed until that token
+is presented in a verified badge.  Every token should be unique.  A badge is not
+valid for verification if its token is on a previously verified badge.
 
-Badge:
-        The response, from a guest, to a party's invitation token.  It includes all
-        the information necessary to uniquely identify the guest, their invitation, and
-        verify their identity with a public key store of the guests choosing.
+*Badge*:
+The response, from a guest, to a party's invitation token.  It includes all
+the information necessary to uniquely identify the guest, their invitation, and
+verify their identity with a public key store of the guest's choosing.
 
-Public key store:
-        Some publically available storage mechanism that maps names to a public DSA key.
+*Public key store*:
+Some publically available storage mechanism that maps names to public DSA keys.
 
-Identity URI:
-        A guest's "name", in essence.  This URI must resolve to the guest's public DSA
-        key.
+*Identity URI*:
+A guest's "name" for verification purposes.  This URI must resolve to the guest's
+
 
 
