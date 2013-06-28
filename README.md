@@ -1,11 +1,19 @@
 Badger
 ======
 
-This document describes a system for the creation and verification of unique
-identities using a public key store as authority.  The mechanisms and storage types
-used are not in the scope of this system, however the example library
-(in development) will use the [Namecoin blockchain](http://dot-bit.org/Main_Page)
-for key retrieval.
+This document is a working draft describing a system for the creation and
+verification of unique identities using a public key store as authority.
+The mechanisms and storage types used are not in the scope of this system,
+however the example library (in development) will use the
+[Namecoin blockchain](http://dot-bit.org/Main_Page) for key retrieval.
+
+
+Authors
+=======
+
+Originally authored by John Driscoll.
+
+Technical consulting by Matthew Brooks.
 
 
 The Party
@@ -73,27 +81,56 @@ any other party she receives an invitation to.
 Terms Used
 ==========
 
-**Guest** / *Client*:
-Someone who wants to be uniquely identified at a server / party.
+**Client**:
+Someone who wants to be uniquely identified at a server.  Alice is the client in
+the party analogy.
 
-**Party** / *Server*:
-A gathering requiring uniquely identifiable guests.  This could be a
-multiplayer game server, for example.
-
-**Token** / *Invitation Token*:
-A unique, base64 encoded string provided to guests.  The token need not be specific
-to a guest.  A party should store a token it has distributed until that token
-is presented in a verified badge.  Every token should be unique.  A badge is not
-valid for verification if its token is on a previously verified badge.
-
-**Badge**:
-The response, from a guest, to a party's invitation token.  It includes all
-the information necessary to uniquely identify the guest, their invitation, and
-verify their identity with a public key store of the guest's choosing.
+**Server**:
+A gathering requiring uniquely identifiable guests.  Bob is the server in the party
+analogy.
 
 **Public key store**:
 Some publically available storage mechanism that maps names to public DSA keys.
 
 **Identity URI**:
-A guest's "name" for verification purposes.  This URI must resolve to the guest's
+A client's "name", for verification purposes.  This URI must resolve to the client's
 public DSA key.
+
+**Token**: 
+A unique piece of data issued by the server as an invitation to clients.
+
+**Signature**:
+A scrambled form of a token that is produced using a client's secret key.
+
+**Badge**:
+A message from client to server containing the client's identity URI, token, and
+signature.
+
+
+Data Specification
+==================
+
+**Badge**:
+    < Identity URI >
+    < Base64-encoded token >
+    < Base64-encoded signature >
+*Note*: Each component string of a badge is delimited with a newline character.
+
+
+Timeline
+========
+
+It begins with the server generating a unique invitation token for distribution to
+clients.  The method of delivery is unspecified, but for security purposes, it is
+recommended that an invitation be generated and delivered to a client immediately
+after the client has initiated communication with, or has otherwise demonstrated
+intent to join, the server.  The longer a token is, the more entropy it contains,
+the better it is for the server's integrity.
+
+After receiving a token, a client uses her secret key to construct their own
+signature of the token.  The client includes her identity URI, the original token,
+and the signature together in a messgae -- her badge -- and sends this to server.
+
+After receiving a badge, the server retrieves the client's public DSA key at the
+given identity URI and uses it to verify that the token signature came from the
+client.
