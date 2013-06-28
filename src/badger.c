@@ -1,8 +1,11 @@
+/* Copyright (c) 2013 John Driscoll */
+
 #include <badger.h>
 #include <tomcrypt.h>
 
 extern ltc_math_descriptor gmp_desc;
 
+/* Badge owner structure */
 typedef struct
 {
     prng_state prng;
@@ -10,37 +13,12 @@ typedef struct
     
 } bdgr_id_owner;
 
+/* Will be removed */
 extern unsigned long int test_key_len;
 extern unsigned char test_key[822];
 
-static int bdgr_open_id_owner( bdgr_id_owner* owner, const unsigned char* pass, const unsigned long int pass_len );
-
-static void bdgr_close_id_owner( bdgr_id_owner* owner )
-{
-    rc4_done( &owner->prng );
-    free( owner->pass );
-}
-
-static int bdgr_private_dsa_key( dsa_key* key, bdgr_id_owner* owner )
-{
-    int err;
-    err = dsa_make_key( &owner->prng, find_prng( "rc4" ), 30, 256, key );
-    if ( err != CRYPT_OK ) {
-        return err;
-    }
-    return 0;
-}
-
-static int bdgr_public_dsa_key( dsa_key* key, const unsigned char* name, const unsigned long int name_len )
-{
-    int err = dsa_import( test_key, test_key_len, key );
-    if( err ) {
-        return err;
-    }
-    return 0;
-}
-
-int bdgr_open_id_owner( bdgr_id_owner* owner, const unsigned char* pass, const unsigned long int pass_len )
+/* Init a badge owner context */
+static int bdgr_open_id_owner( bdgr_id_owner* owner, const unsigned char* pass, const unsigned long int pass_len )
 {
     int err;
 
@@ -82,6 +60,35 @@ int bdgr_open_id_owner( bdgr_id_owner* owner, const unsigned char* pass, const u
     
 }
 
+/* Free memory associated with owner id */
+static void bdgr_close_id_owner( bdgr_id_owner* owner )
+{
+    rc4_done( &owner->prng );
+    free( owner->pass );
+}
+
+/* Generate the private key for a badge owner */
+static int bdgr_private_dsa_key( dsa_key* key, bdgr_id_owner* owner )
+{
+    int err;
+    err = dsa_make_key( &owner->prng, find_prng( "rc4" ), 30, 256, key );
+    if ( err != CRYPT_OK ) {
+        return err;
+    }
+    return 0;
+}
+
+/* Retrieve the public key for a name */
+static int bdgr_public_dsa_key( dsa_key* key, const unsigned char* name, const unsigned long int name_len )
+{
+    int err = dsa_import( test_key, test_key_len, key );
+    if( err ) {
+        return err;
+    }
+    return 0;
+}
+
+/* Construct a badge with given token and name */
 int bdgr_make_badge(
     unsigned char* badge,
     unsigned long int* badge_len,
@@ -139,6 +146,7 @@ int bdgr_make_badge(
     return err;
 }
 
+/* Verify a badge and store the name and token it contains. This has no concept of token validity. */
 int bdgr_verify_badge(
     const unsigned char* badge,
     const unsigned long int badge_len,

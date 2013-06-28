@@ -1,3 +1,5 @@
+/* Copyright (c) 2013 John Driscoll */
+
 #ifndef BADGER_H
 #define BADGER_H
 
