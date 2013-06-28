@@ -131,7 +131,7 @@ after the client has initiated communication with, or has otherwise demonstrated
 intent to join, the server.  The longer a token is, the more entropy it contains,
 the better it is for the server's integrity.
 
-After receiving a token, a client uses her secret key to construct their own
+After receiving a token, a client uses her secret key to construct her own
 signature of the token.  The client includes her identity URI, the original token,
 and the signature together in a messgae -- her badge -- and sends this to server.
 
