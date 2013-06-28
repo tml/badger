@@ -5,8 +5,8 @@ This document describes a system for the creation and verification of unique
 identities using a public key store as authority.
 
 
-Analogy
-=======
+The Party
+=========
 
 Bob wants to throw a party.  At his party, Bob wants everyone to wear a unique name
 tag to ease introductions.  Bob is woefully afraid that social embarassment might
@@ -70,26 +70,29 @@ any other party she receives an invitation to.
 Terms Used
 ==========
 
-Guest:
-        Someone who wants to be uniquely identified at a party.
+Client / Guest:
+        Someone who wants to be uniquely identified at a server / party.
 
-Party:
+Server / Party:
         A gathering requiring uniquely identifiable guests.  This could be a multiplayer
         game server, for example.
 
 Token / Invitation Token:
-        A unique, base64 encoded string provided to guests without badges.  The token
-        need not be specific to a guest.
+        A unique, base64 encoded string provided to guests.  The token need not be specific
+        to a guest.  A party should store a token it has distributed until that token
+        is presented in a verified badge.  Every token should be unique.  A badge is not
+        valid for verification if its token is on different, verified badge.
 
 Badge:
         The response, from a guest, to a party's invitation token.  It includes all
         the information necessary to uniquely identify the guest, their invitation, and
         verify their identity with a public key store of the guests choosing.
 
-Key store / Public key store:
-        Some publically available storage mechanism that maps names with a public DSA
-        key.
+Public key store:
+        Some publically available storage mechanism that maps names to a public DSA key.
 
 Identity URI:
-         A guest's "name", in essence.  This URI must resolve to the guest's public DSA
-         key at the public key store of their choosing.
+        A guest's "name", in essence.  This URI must resolve to the guest's public DSA
+        key.
+
+
