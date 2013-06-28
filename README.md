@@ -96,4 +96,4 @@ Some publically available storage mechanism that maps names to public DSA keys.
 
 **Identity URI**:
 A guest's "name" for verification purposes.  This URI must resolve to the guest's
-
+public DSA key.
