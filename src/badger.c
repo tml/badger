@@ -197,7 +197,7 @@ int bdgr_verify_badge(
 
     /* Extract token hash */
     while( *badge_ptr != '\n' &&
-           badge_ptr == badge + badge_len ) {
+           badge_ptr != badge + badge_len ) {
         *token_hash_ptr++ = *badge_ptr++;
     }
     if( token_hash_ptr == token_hash ) {
