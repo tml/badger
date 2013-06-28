@@ -117,6 +117,8 @@ Data Specification
     < Base64-encoded signature >
 
 *Note*: Each component string of a badge is delimited with a newline character.
+Because newline characters are not acceptable in any of the component strings,
+a badge must end with a single newline character.
 
 
 Timeline
