@@ -124,7 +124,11 @@ a badge must end with a single newline character.
 Timeline
 ========
 
-It begins with the server generating a unique invitation token for distribution to
+First, a client who wants to be uniquely identifiable generates a DSA key pair.
+The client keeps her private key private, and posts the public key at some 
+public URI.  This becames her identity URI.
+
+Second, a server generates unique invitation tokens for distribution to
 clients.  The method of delivery is unspecified, but for security purposes, it is
 recommended that an invitation be generated and delivered to a client immediately
 after the client has initiated communication with, or has otherwise demonstrated
