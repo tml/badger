@@ -77,11 +77,12 @@ badge that contains this information:
     Hey Alice, you're invited to Bob's Badge Party!
     Url Nyvpr, lbh'er vaivgrq gb Obo'f Onqtr Cnegl!
 
-This is a collection of:
+This badge will provide Bob with...
 
-1. Who the badge belongs to.
-2. The invitation message as originally written by Bob.
-3. The invitation message, but scrambled by the private code in Alice's printer.
+1. ...Alice's name and code provider, and...
+2. ...the invitation message as originally written by Bob, and...
+3. ...the invitation message, but scrambled by the private code in Alice's
+   Acme printer.
 
 She brings the badge to the party and gives it to Bob.  Bob recognizes the
 invitation he gave to Alice.  Bob calls up Acme and gets Alice's public code.
