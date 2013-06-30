@@ -84,28 +84,15 @@ into any other party she receives an invitation to.
 Terms Used
 ==========
 
-Term                 | Definition
----------------------|----------------------------------------------------------
-
-**Client**           | Someone who wants to be uniquely identified at a server.
-                       Alice is the client in the party analogy.
-
-**Server**           | A gathering requiring uniquely identifiable guests.  Bob
-                       is the server in the party analogy.
-
-**Public key store** | Some publically available storage mechanism that maps
-                     | names to public DSA keys via a URL.
-                     |
-**Identity URL**     | A client's "name", for verification purposes.  This URL
-                     | resolves to the client's public DSA key.
-                     |
-**Token**            | A unique piece of data issued by the server as an
-                     | invitation to clients.
-                     |
-**Signature**        | DSA signature of a token.
-                     |
-**Badge**            | A message from client to server containing the client's
-                     | identity URL, token, and signature.
+Term         | Definition
+-------------|------------------------------------------------------------------
+Client       | Someone who wants to be uniquely identified at a server.
+Server       | A gathering requiring uniquely identifiable guests.
+Key store    | Storage with DSA public keys mapped by Identity URLs.
+Identity URL | A URL resolving to a DSA public key.
+Token        | A unique piece of data issued by a server as an invitation.
+Signature    | DSA signed hash of a token.
+Badge        | Client-composed identity that a server can independently verify.
 
 
 Data Specification
