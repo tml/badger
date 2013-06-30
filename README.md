@@ -60,19 +60,19 @@ He then unscrambles the third line of her badge using Alice's public code.
 If the third line unscrambles to his original invitation message, he will let
 Alice in, because...
 
-  * ...he knows only Alice could have created the scrambled message using her
-    own private code, and...
+* ...he knows only Alice could have created the scrambled message using her
+  own private code, and...
 
-  * ...he knows Acme's public code for Alice is the only way to unscramble
-    the secret code in Alice's badge to his original invitation message, and...
+* ...he knows Acme's public code for Alice is the only way to unscramble
+  the secret code in Alice's badge to his original invitation message, and...
 
-  * ...he knows he issued the invitation, for which he has the original on file,
-    and...
+* ...he knows he issued the invitation, for which he has the original on file,
+  and...
 
-  * ...he knows there may be more than one Alice at the party, and more than one
-    person using Acme as their code provider, but there can only be one
-    **Alice at Acme**.
-  
+* ...he knows there may be more than one Alice at the party, and more than one
+  person using Acme as their code provider, but there can only be one
+  **Alice at Acme**.
+
 Bob can repeat his verification process using any other public code provider his
 guest prefers.  No one at Bob's party gets identities confused, and the party is
 a rousing success.
@@ -93,6 +93,14 @@ Identity URL | A URL resolving to a client's DSA public key.
 Token        | A unique piece of data issued by a server as a client invitation.
 Signature    | Client's DSA signed hash of a token.
 Badge        | Client-composed identity that a server can independently verify.
+
+Other references:
+
+* [Digital Signing Algorithm (DSA)]
+  (https://en.wikipedia.org/wiki/Digital_Signature_Algorithm)
+
+* [Public Key Cryptography]
+  (http://en.wikipedia.org/wiki/Public-key_cryptography)
 
 
 Data Specification
