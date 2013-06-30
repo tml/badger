@@ -31,8 +31,8 @@ a copy of each invitation and keeps the originals for his records.  He then
 takes the copies and gives them to his guests, either directly, or by leaving
 them in a place where his guests will find them.
 
-Alice, after finding one of Bob's invitations, goes to a code provider of her
-choice.  Let's say that **Acme** is her choice key provider.  Acme gives Alice
+Alice, after finding one of Bob's invitations, goes to a "code provider" of her
+choice.  Let's say that **Acme** is her choice code provider.  Acme gives Alice
 her own special printer, and puts a "public code" for Alice on record.  Alice's
 printer is uniquely desgined to print things in a scrambled code.  The scramble
 can only be deciphered using the public code that Acme has on record.
