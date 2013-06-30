@@ -121,8 +121,9 @@ signature of the token.  The client includes her identity URL, the original
 token, and the signature together in a messgae -- her badge -- and sends this
 to server.
 
-After receiving a badge, the server retrieves the client's public DSA key at the
-given identity URL and uses it to verify that the token signature.
+After receiving a badge, the server should verify that it issued the enclosed
+token.  The server then retrieves the client's public DSA key at the given
+Identity URL and uses it to verify the token signature.
 
 
 TODO
