@@ -1,12 +1,8 @@
 Badger
 ======
 
-This document is a working draft describing a system of verification of unique
-identities using a public key store as authority.  The mechanisms of storage and
-transfer are not in the scope of this system, however the example binary (in
-development) will use the [Namecoin blockchain](http://dot-bit.org/Main_Page)
-for key retrieval.
-
+This document is a working draft describing a method for servers to authenticate
+clients independently using a public key store as authority.
 
 Authors
 =======
@@ -14,6 +10,34 @@ Authors
 Originally authored by John Driscoll.
 
 Technical consulting by Matthew Brooks.
+
+
+Motivations
+===========
+
+Badger is an alternative to existing decentralized authentication systems that
+require regular, direct communication between client and authority.  This allows
+clients to authenticate with servers easily and securely in a browserless
+environment, because there is no necessity to tunnel the client to an authority
+for the purposes of its own authentication.  Using Badger, clients need only
+communicate with an authority once in their lifetime.
+
+The mechanisms of storage and transfer are not in the scope of this system,
+however the example binary (in development) will support the
+[Namecoin blockchain](http://dot-bit.org/Main_Page) as an authority.  Namecoin
+is an ideal authority because...
+
+* ...it is persistent.
+
+* ...it is public.
+
+* ...it is open source.
+
+* ...its records are distributed and cannot be controled or tampered with by any
+  one organization or government.
+
+* ...it is (nearly) impossible to censor.
+
 
 
 The Party
@@ -43,7 +67,7 @@ to keep her printer safe and secret because if someone should steal it, they can
 print all the "Alice at Acme" badges they want.
 
 Alice feeds the invitation she received into her printer and it prints out a
-badge that looks something like this:
+badge that contains this information:
 
     Alice at Acme
     Hey Alice, you're invited to Bob's Badge Party!
@@ -57,21 +81,19 @@ Alice's printer.
 She brings the badge to the party and gives it to Bob.  Bob recognizes the
 invitation he gave to Alice.  Bob calls up Acme and gets Alice's public code.
 He then unscrambles the third line of her badge using Alice's public code.
-If the third line unscrambles to his original invitation message, he will let
-Alice in, because...
+If the third line unscrambles to his original invitation message, he knows
+Alice is really **Alice at Acme** because:
 
-* ...he knows only Alice could have created the scrambled message using her
+* ...he knows only Alice could have created the scrambled invitation using her
   own private code, and...
 
-* ...he knows Acme's public code for Alice is the only way to unscramble
-  the secret code in Alice's badge to his original invitation message, and...
+* ...he knows Acme's public code for Alice is the only way to decipher the
+  scramble in Alice's badge to his original invitation message, and...
 
-* ...he knows he issued the invitation, for which he has the original on file,
-  and...
+* ...he knows he issued the invitation, for which he has the original on file.
 
-* ...he knows there may be more than one Alice at the party, and more than one
-  person using Acme as their code provider, but there can only be one
-  **Alice at Acme**.
+While there may be more than one Alice at the party, and more than one person
+using Acme as their code provider, there can only be one **Alice at Acme**.
 
 Bob can repeat his verification process using any other public code provider his
 guest prefers.  No one at Bob's party gets identities confused, and the party is
@@ -86,13 +108,13 @@ Terms Used
 
 Term         | Definition
 -------------|------------------------------------------------------------------
-Client       | Someone who wants to be uniquely identified at a server.
-Server       | A gathering requiring uniquely identifiable guests.
-Key store    | Storage with DSA public keys mapped by Identity URLs.
+Client       | A person who wants to be uniquely identified at a server.
+Server       | A gathering requiring uniquely identifiable persons.
+Authority    | A storage area where Identity URLs are mapped to DSA public keys.
 Identity URL | A URL resolving to a client's DSA public key.
 Token        | A unique piece of data issued by a server as a client invitation.
-Signature    | Client's DSA signed hash of a token.
-Badge        | Client-composed identity that a server can independently verify.
+Signature    | A client's DSA signed hash of a token.
+Badge        | A client-composed identity that servers can independently verify.
 
 Other references:
 
@@ -102,13 +124,6 @@ Other references:
 * [Public Key Cryptography]
   (http://en.wikipedia.org/wiki/Public-key_cryptography)
 
-
-Data Specification
-==================
-
-    Badge
-    ----------------------------------------------------------------------------
-    
 
 Timeline
 ========
@@ -121,8 +136,7 @@ A server generates unique invitation tokens for distribution to clients.  The
 method of delivery is unspecified, but for security purposes, it is recommended
 that an invitation be generated and delivered to a client immediately after the
 client has initiated communication with, or has otherwise demonstrated intent to
-join, the server.  The longer a token is, the more entropy it contains, the
-better it is for the integrity of the server.
+join, the server.
 
 After receiving a token, a client uses her secret key to construct her own
 signature of the token.  The client includes her identity URL, the original
@@ -131,16 +145,35 @@ to server.
 
 After receiving a badge, the server should verify that it issued the enclosed
 token.  The server then retrieves the client's public DSA key at the given
-Identity URL and uses it to verify the token signature.
+Identity URL and uses it to verify the signature.
 
+
+Data Specification
+==================
+
+    Badge
+    ----------------------------------------------------------------------------
+    
+    JSON object containing the attributes:
+    
+    "id":         Valid URL.
+    
+    "token":      Base64 encoded token.
+    
+    "signature":  Base64 encoded signature.
+    
 
 TODO
 ====
+
+* Document conventions ( markdown, 80 char lines, etc. )
+
+* JSON
+
+* XRI support?
 
 * Library
 
 * Sample verification binary
 
-* Document conventions ( markdown, 80 char lines, etc. )
-
-* TOC
+* Table of contents?
