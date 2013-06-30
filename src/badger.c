@@ -90,14 +90,12 @@ static int bdgr_public_dsa_key( dsa_key* key, const unsigned char* name, const u
 
 /* Construct a badge with given token and name */
 int bdgr_make_badge(
-    unsigned char* badge,
-    unsigned long int* badge_len,
-    const unsigned char* token,
-    const unsigned long int token_len,
     const unsigned char* name,
     const unsigned long int name_len,
-    const unsigned char* pass,
-    const unsigned long int pass_len )
+    const unsigned char* token,
+    const unsigned long int token_len,
+    const bdgr_private_key* key,
+    bdgr_badge* badge )
 {
     
     int err;
