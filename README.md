@@ -38,10 +38,14 @@ is an ideal authority because...
 
 * ...it is (nearly) impossible to censor.
 
+It is worth noting that, while existing decentralized authentication systems do
+not necessarily specify a browser requirement, the requirement to tunnel clients
+to an authority for authentication directly is universally fulfilled via the
+browser.
 
 
-The Party
-=========
+The Party: An Anology in Plain English
+======================================
 
 Bob wants to throw a party.  At his party, Bob wants everyone to wear a unique
 name tag to ease introductions.  Bob is woefully afraid that social embarassment
