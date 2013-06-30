@@ -84,7 +84,8 @@ into any other party she receives an invitation to.
 Terms Used
 ==========
 
-
+Term                 | Definition
+---------------------|----------------------------------------------------------
 **Client**           | Someone who wants to be uniquely identified at a server.
                      | Alice is the client in the party analogy.
                      |
@@ -109,7 +110,9 @@ Terms Used
 Data Specification
 ==================
 
-**Badge** | A JSON object containing three attributes...
+Data type            | Specification
+---------------------|----------------------------------------------------------
+**Badge**            | A JSON object containing three attributes...
 
 
 Timeline
