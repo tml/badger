@@ -119,7 +119,7 @@ Server       | A gathering requiring uniquely identifiable persons.
 Authority    | A storage area where Identity URLs are mapped to DSA public keys.
 Identity URL | A URL resolving to a client's DSA public key.
 Token        | A unique piece of data issued by a server as a client invitation.
-Signature    | A client's DSA signed hash of a token.
+Signature    | A client's DSA signature of a token.
 Badge        | A client-composed identity that servers can independently verify.
 
 Other references:
@@ -160,13 +160,31 @@ Data Specification
     Badge
     ----------------------------------------------------------------------------
     
-    JSON object containing the attributes:
+    JSON object containing the string attributes:
     
-    "id":         Valid URL.
+    "id":         Valid Identity URL.
     
     "token":      Base64 encoded token.
     
     "signature":  Base64 encoded signature.
+    
+    
+    Token
+    ----------------------------------------------------------------------------
+    
+    A token can be any unique data.  A hashed value is recommended.  A raw token
+    must be base64-encoded when included as part of a badge.  When
+    authenticating a client badge, the raw (base64-decoded) token must be
+    verified with the raw (base64-decoded) signature.
+    
+    
+    Signature
+    ----------------------------------------------------------------------------
+    
+    A DSA signature of the raw (base64-decoded) token.  A raw signature must be
+    base64-encoded when included as part of a badge.  When authenticating a
+    client badge, the raw (base64-decoded) signature must be verified with
+    the raw (base64-decoded) token.
     
 
 TODO
