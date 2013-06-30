@@ -44,7 +44,7 @@ to an authority for authentication directly is universally fulfilled via the
 browser.
 
 
-The Party: An Anology in Plain English
+The Party: An Analogy in Plain English
 ======================================
 
 Bob wants to throw a party.  At his party, Bob wants everyone to wear a unique
