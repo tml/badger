@@ -89,19 +89,18 @@ Term         | Definition
 Client       | Someone who wants to be uniquely identified at a server.
 Server       | A gathering requiring uniquely identifiable guests.
 Key store    | Storage with DSA public keys mapped by Identity URLs.
-Identity URL | A URL resolving to a DSA public key.
-Token        | A unique piece of data issued by a server as an invitation.
-Signature    | DSA signed hash of a token.
+Identity URL | A URL resolving to a client's DSA public key.
+Token        | A unique piece of data issued by a server as a client invitation.
+Signature    | Client's DSA signed hash of a token.
 Badge        | Client-composed identity that a server can independently verify.
 
 
 Data Specification
 ==================
 
-Data type            | Specification
----------------------|----------------------------------------------------------
-**Badge**            | A JSON object containing three attributes...
-
+    Badge
+    ----------------------------------------------------------------------------
+    
 
 Timeline
 ========
