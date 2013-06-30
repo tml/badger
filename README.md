@@ -86,12 +86,13 @@ Terms Used
 
 Term                 | Definition
 ---------------------|----------------------------------------------------------
+
 **Client**           | Someone who wants to be uniquely identified at a server.
-                     | Alice is the client in the party analogy.
-                     |
+                       Alice is the client in the party analogy.
+
 **Server**           | A gathering requiring uniquely identifiable guests.  Bob
-                     | is the server in the party analogy.
-                     |
+                       is the server in the party analogy.
+
 **Public key store** | Some publically available storage mechanism that maps
                      | names to public DSA keys via a URL.
                      |
