@@ -16,8 +16,8 @@ Motivations
 ===========
 
 Badger is an alternative to existing decentralized authentication systems that
-require regular, direct communication between client and authority.  This allows
-clients to authenticate with servers easily and securely in a browserless
+require regular, direct communication between client and authority.  Badger
+allows clients to authenticate with servers easily and securely in a browserless
 environment, because there is no necessity to tunnel the client to an authority
 for the purposes of its own authentication.  Using Badger, clients need only
 communicate with an authority once in their lifetime.
