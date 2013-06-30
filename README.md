@@ -173,9 +173,9 @@ Data Specification
     ----------------------------------------------------------------------------
     
     A token can be any unique data.  A hashed value is recommended.  A raw token
-    must be base64-encoded when included as part of a badge.  When
-    authenticating a client badge, the raw (base64-decoded) token must be
-    verified with the raw (base64-decoded) signature.
+    must be base64-encoded when included as part of a badge.  When authenticat-
+    ing a client badge, the raw (base64-decoded) token must be verified with the
+    raw (base64-decoded) signature.
     
     
     Signature
@@ -183,8 +183,8 @@ Data Specification
     
     A DSA signature of the raw (base64-decoded) token.  A raw signature must be
     base64-encoded when included as part of a badge.  When authenticating a
-    client badge, the raw (base64-decoded) signature must be verified with
-    the raw (base64-decoded) token.
+    client badge, the raw (base64-decoded) signature must be verified with the
+    raw (base64-decoded) token.
     
 
 TODO
