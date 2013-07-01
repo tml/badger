@@ -4,6 +4,9 @@ Badger
 This document is a working draft describing a method for servers to authenticate
 clients independently using a public key store as authority.
 
+For an explanation of what Badger does in plain English, skip to
+[The Party](#the-party-an-analogy-in-plain-english).
+
 Authors
 =======
 
@@ -161,11 +164,8 @@ Data Specification
     ----------------------------------------------------------------------------
     
     JSON object containing the string attributes:
-    
     "id":         Valid Identity URL.
-    
     "token":      Base64 encoded token.
-    
     "signature":  Base64 encoded signature.
     
     
