@@ -1,3 +1,4 @@
+<a id="top"></a>
 ![Badger](http://www.wpclipart.com/animals/B/badger/badger_2.png)
 
 Badger
