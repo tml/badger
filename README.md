@@ -121,7 +121,7 @@ Term         | Definition
 Client       | A person who wants to be uniquely identified at a server.
 Server       | A gathering requiring uniquely identifiable persons.
 Authority    | A storage area where Identity URLs are mapped to DSA public keys.
-Identity URL | A URL resolving to a client's DSA public key.
+Identity URL | A URL resolving to a client's base64-encoded DSA public key.
 Token        | A unique piece of data issued by a server as a client invitation.
 Signature    | A client's DSA signature of a token.
 Badge        | A client-composed identity that servers can independently verify.
@@ -140,7 +140,7 @@ Timeline
 
 First, a client who wants to be uniquely identifiable generates a DSA key pair.
 The client keeps her private key private, and posts the public key at some 
-public URL.  This becomes her identity URL.
+public URL.  This becomes her Identity URL.
 
 A server generates unique invitation tokens for distribution to clients.  The
 method of delivery is unspecified, but for security purposes, it is recommended
@@ -149,7 +149,7 @@ client has initiated communication with, or has otherwise demonstrated intent to
 join, the server.
 
 After receiving a token, a client uses her secret key to construct her own
-signature of the token.  The client includes her identity URL, the original
+signature of the token.  The client includes her Identity URL, the original
 token, and the signature together in a messgae -- her badge -- and sends this
 to server.
 
@@ -166,8 +166,8 @@ Data Specification
     
     JSON object containing the string attributes:
     "id":         Valid Identity URL.
-    "token":      Base64 encoded token.
-    "signature":  Base64 encoded signature.
+    "token":      Base64-encoded token.
+    "signature":  Base64-encoded signature.
     
     
     Token
