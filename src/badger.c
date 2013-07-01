@@ -129,6 +129,7 @@ int bdgr_key_decode(
     unsigned long int string_len = strlen( string );
     unsigned long int data_len = (string_len * 1.37) + 815;
     unsigned char* data = malloc( data_len );
+    bdgr_init();
     
     err = base64_decode(
         (unsigned char*)string, string_len,
