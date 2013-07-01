@@ -187,6 +187,13 @@ Data Specification
     client badge, the raw (base64-decoded) signature must be verified with the
     raw (base64-decoded) token.
     
+    
+    DSA Public Key
+    ----------------------------------------------------------------------------
+    
+    An authority must provide a base64-encoded DSA public key in a JSON object
+    with a "pubkey" string attribute.
+
 
 TODO
 ====
@@ -200,5 +207,9 @@ TODO
 * Library
 
 * Sample verification binary
+
+* Some note to affect that the DSA key shall never be used to encrypt a message
+  and a reference to something on RSA blind signing attacks:
+  http://en.wikipedia.org/wiki/Blind_signature#Dangers_of_blind_signing
 
 * Table of contents?

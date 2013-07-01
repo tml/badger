@@ -6,18 +6,17 @@ set( CMAKE_MODULE_PATH
   ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/" )
 find_package( LibTomCrypt REQUIRED )
 find_package( Jansson REQUIRED )
+find_package( CURL )
 
 list( APPEND CMAKE_C_FLAGS "-Wall -Wextra -pedantic-errors" )
 
 include_directories( "${CMAKE_SOURCE_DIR}/include" )
 
-set( badger_SOURCES src/badger.c )
-
-add_library( badger SHARED ${badger_SOURCES} )
-
+add_library( badger SHARED src/badger.c )
 target_link_libraries( badger
   ${LibTomCrypt_LIBRARIES} ${Jansson_LIBRARIES} )
 
-add_executable( verify verify.c )
-
-target_link_libraries( verify badger )
+if( CURL_FOUND )
+  add_executable( badger_verify badger_verify.c )
+  target_link_libraries( badger_verify badger ${CURL_LIBRARIES} )
+endif( CURL_FOUND )
