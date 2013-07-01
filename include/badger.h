@@ -40,7 +40,7 @@ typedef struct {
 } bdgr_key;
 
 /*
-  Creates a key using password as entropy.
+  Initializes key using password as entropy.
 */
 int bdgr_key_generate(
     const char* const password,
@@ -48,7 +48,8 @@ int bdgr_key_generate(
 );
 
 /*
-  Import binary key data.  Key data must be in libtomcrypt DSA key format.
+  Initializes key using raw DSA key data of length data_len  in libtomcrypt's
+  DSA key format.
 */
 int bdgr_key_import(
     const unsigned char* const data,
@@ -57,8 +58,8 @@ int bdgr_key_import(
 );
 
 /*
-  Import key from base64 encoded character data. Key data must be in libtomcrypt
-  DSA key format.
+  Initializes key from base64 encoded character data. Key data must be in
+  libtomcrypt DSA key format.
 */
 int bdgr_key_decode(
     const char* const data,
@@ -73,7 +74,8 @@ void bdgr_key_free(
 );
 
 /*
-  Signs a token using a private DSA key.
+  Signs a token using a private DSA key.  The signature is written to signature
+  of initial length signature_len.
 */
 int bdgr_token_sign(
     const unsigned char* const token,
@@ -96,7 +98,7 @@ int bdgr_badge_make(
 );
 
 /*
-  Verify a badge came from public DSA key.
+  Verify a badge came from public DSA key. The validity is written to verified.
 */
 int bdgr_badge_verify(
     const bdgr_badge* const badge,
@@ -113,7 +115,7 @@ int bdgr_badge_import(
 );
 
 /*
-  Export a badge to JSON.
+  Export a badge to JSON. You must call free on json_string when done.
 */
 int bdgr_badge_export(
     const bdgr_badge* const badge,
