@@ -14,7 +14,7 @@ include_directories( "${CMAKE_SOURCE_DIR}/include" )
 
 add_library( badger SHARED src/badger.c )
 target_link_libraries( badger
-  ${LibTomCrypt_LIBRARIES} ${Jansson_LIBRARIES} )
+  ${LibTomCrypt_LIBRARIES} ${JANSSON_LIBRARIES} )
 
 if( CURL_FOUND )
   add_executable( badger_verify badger_verify.c )
