@@ -1,8 +1,6 @@
-<a id="top"></a>
-![Badger](http://www.wpclipart.com/animals/B/badger/badger_2.png)
-
 Badger
 ======
+![Badger](http://www.wpclipart.com/animals/B/badger/badger_2.png)
 
 This document is a working draft describing a method for servers to authenticate
 clients independently using a public key store as authority.
