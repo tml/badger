@@ -75,13 +75,13 @@ int main( const int argc, char* const* argv )
     if( pass != NULL ) {
         err = bdgr_key_generate( pass, &key );
         if( err ) {
-            puts( "error generating key" );
+            fprintf( stderr, "error generating key\n" );
             exit( err );
         }
     } else {
         err = bdgr_key_decode( key_string, &key );
         if( err ) {
-            puts( "error decoding key" );
+            fprintf( stderr, "error decoding key\n" );
             exit( err );
         }
     }
@@ -90,25 +90,25 @@ int main( const int argc, char* const* argv )
     tokenb = malloc( tokenb_len );
     err = base64_decode( (unsigned char*)token, token_len, tokenb, &tokenb_len );
     if( err ) {
-        puts( "error decoding token" );
+        fprintf( stderr, "error decoding token\n" );
         exit( err );
     }
 
     err = bdgr_token_sign( tokenb, tokenb_len, &key, signature, &signature_len );
     if( err ) {
-        puts( "error signing token" );
+        fprintf( stderr, "error signing token\n" );
         exit( err );
     }
 
     err = bdgr_badge_make( id, tokenb, tokenb_len, signature, signature_len, &badge );
     if( err ) {
-        puts( "error making badge" );
+        fprintf( stderr, "error making badge\n" );
         exit( err );
     }
     
     err = bdgr_badge_export( &badge, &badge_string );
     if( err ) {
-        puts( "error exporting badge" );
+        fprintf( stderr, "error exporting badge\n" );
         exit( err );
     }
 

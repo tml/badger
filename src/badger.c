@@ -307,25 +307,29 @@ int bdgr_badge_import(
     char const* tokenc, * signaturec;
     unsigned char* tokenb = 0, * signatureb = 0;
     unsigned long int tokenb_len, signatureb_len;
-    
+
     root = json_loads( json_string, 0, &error );
     if( !root ) {
-        /* fprintf(stderr, "error: on line %d: %s\n", error.line, error.text);*/
+        err = 1;
+        /* fprintf( stderr, "error: on line %d: %s\n", error.line, error.text );*/
         goto bdgr_badge_import_free;
     }
 
     id = json_object_get( root, "id" );
     if( !json_is_string( id )) {
+        err = 2;
         goto bdgr_badge_import_free;
     }
     
     token = json_object_get( root, "token" );
     if( !json_is_string( token )) {
+        err = 3;
         goto bdgr_badge_import_free;
     }
     
     signature = json_object_get( root, "signature" );
     if( !json_is_string( signature )) {
+        err = 4;
         goto bdgr_badge_import_free;
     }
 

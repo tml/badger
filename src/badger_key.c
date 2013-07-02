@@ -55,13 +55,13 @@ int main( const int argc, char* const* argv )
 
     err = bdgr_key_generate( pass, &key );
     if( err ) {
-        puts( "error generating key" );
+        fprintf( stderr, "error generating key\n" );
         exit( err );
     }
 
     err = bdgr_key_encode_private( &key, &string );
     if( err ) {
-        puts( "error encoding key" );
+        fprintf( stderr, "error encoding key\n" );
         exit( err );
     }
 

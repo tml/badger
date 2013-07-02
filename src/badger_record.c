@@ -64,13 +64,13 @@ int main( const int argc, char* const* argv )
         
         err = bdgr_key_generate( pass, &key );
         if( err ) {
-            puts( "error generating key" );
+            fprintf( stderr, "error generating key\n" );
             exit( err );
         }
         
         err = bdgr_key_encode_private( &key, &key_string );
         if( err ) {
-            puts( "error encoding key" );
+            fprintf( stderr, "error encoding key\n" );
             exit( err );
         }
         
@@ -80,18 +80,17 @@ int main( const int argc, char* const* argv )
         "{ss}",
         "pubkey", key_string );
     if( !root ) {
-        puts( "error packing json" );
+        fprintf( stderr, "error packing json\n" );
         exit( 1 );
     }
 
     string = json_dumps( root, 0 );
     if( !string ) {
-        puts( "error dumping json" );
+        fprintf( stderr, "error dumping json\n" );
         exit( 2 );
     }
     
     puts( string );
-    printf("%d\n", strlen( string ));
     
     return 0;
     
