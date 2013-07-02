@@ -84,7 +84,7 @@ int bdgr_key_generate(
     key->_impl = malloc( sizeof( dsa_key ));
     err = dsa_make_key(
         &prng, find_prng( "rc4" ),
-        30, 256,
+        20, 128,
         (dsa_key*)key->_impl );
     if ( err != CRYPT_OK ) {
         goto bdgr_key_generate_free;

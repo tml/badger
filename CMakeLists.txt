@@ -19,6 +19,9 @@ target_link_libraries( badger
 add_executable( badger_key badger_key.c )
 target_link_libraries( badger_key badger )
 
+add_executable( badger_record badger_record.c )
+target_link_libraries( badger_record badger ${JANSSON_LIBRARIES} )
+
 add_executable( badger_badge badger_badge.c )
 target_link_libraries( badger_badge badger ${LibTomCrypt_LIBRARIES} )
 
