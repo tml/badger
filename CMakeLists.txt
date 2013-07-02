@@ -28,6 +28,6 @@ target_link_libraries( badger_badge badger ${LibTomCrypt_LIBRARIES} )
 if( CURL_FOUND )
   
   add_executable( badger_verify src/badger_verify.c )
-  target_link_libraries( badger_verify badger ${CURL_LIBRARIES} )
+  target_link_libraries( badger_verify badger ${CURL_LIBRARIES} ${JANSSON_LIBRARIES} )
   
 endif( CURL_FOUND )
