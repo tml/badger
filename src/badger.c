@@ -81,6 +81,7 @@ int bdgr_key_generate(
         goto bdgr_key_generate_free;
     }
 
+    key->_impl = malloc( sizeof( dsa_key ));
     err = dsa_make_key(
         &prng, find_prng( "rc4" ),
         30, 256,
@@ -99,7 +100,7 @@ int bdgr_key_generate(
         memset( sane_pass, 0, 64 );
         free( sane_pass );
     }
-    
+
     return err;
     
 }
@@ -113,6 +114,7 @@ int bdgr_key_import(
     int err;
     bdgr_init();
 
+    key->_impl = malloc( sizeof( dsa_key ));
     err = dsa_import( data, data_len, (dsa_key*)key->_impl );
     if( err ) {
         return err;
@@ -127,7 +129,7 @@ int bdgr_key_decode(
 {
     int err;
     unsigned long int string_len = strlen( string );
-    unsigned long int data_len = (string_len * 1.37) + 815;
+    unsigned long int data_len = string_len;
     unsigned char* data = malloc( data_len );
     bdgr_init();
     
@@ -147,6 +149,81 @@ int bdgr_key_decode(
 
     free( data );
     return err;
+}
+
+int bdgr_key_export_public(
+    const bdgr_key* const key,
+    unsigned char* const data,
+    unsigned long int* const data_len
+)
+{
+    return dsa_export( data, data_len, PK_PUBLIC, (dsa_key*)key->_impl );
+}
+
+int bdgr_key_export_private(
+    const bdgr_key* const key,
+    unsigned char* const data,
+    unsigned long int* const data_len
+)
+{
+    return dsa_export( data, data_len, PK_PRIVATE, (dsa_key*)key->_impl );
+}
+
+static int bdgr_key_encode(
+    const bdgr_key* const key,
+    char** string,
+    int type
+)
+{
+    int err;
+    unsigned char* data;
+    char* string_out;
+    unsigned long int data_len = 2048, string_out_len;
+    data = malloc( 2048 );
+    if( type ) {
+        err = bdgr_key_export_private( key, data, &data_len );
+    } else {
+        err = bdgr_key_export_public( key, data, &data_len );
+    }
+    if( err ) {
+        goto bdgr_key_encode_free;
+    }
+    string_out_len = (data_len * 1.37) + 815;
+    string_out = malloc( string_out_len );
+    err = base64_encode( data, data_len, (unsigned char*)string_out, &string_out_len );
+    if( err ) {
+        goto bdgr_key_encode_free;
+    }
+    
+ bdgr_key_encode_free:
+
+    free( data );
+    if( err ) {
+        if( string_out ) {
+            free( string_out );
+        }
+    } else {
+        if( string_out ) {
+            *string = string_out;
+        }
+    }
+    return err;
+}
+
+int bdgr_key_encode_public(
+    const bdgr_key* const key,
+    char** string
+)
+{
+    return bdgr_key_encode( key, string, 0 );
+}
+
+int bdgr_key_encode_private(
+    const bdgr_key* const key,
+    char** string
+)
+{
+    return bdgr_key_encode( key, string, 1 );
 }
 
 void bdgr_key_free(
@@ -193,7 +270,7 @@ int bdgr_badge_make(
 {
     unsigned long int id_len = strlen( id );
     badge->id = malloc( id_len );
-    memcpy( badge->id, id, id_len );
+    strcpy( badge->id, id );
     badge->token = malloc( token_len );
     memcpy( badge->token, token, token_len );
     badge->token_len = token_len;
@@ -298,7 +375,7 @@ int bdgr_badge_import(
 
 int bdgr_badge_export(
     const bdgr_badge* const badge,
-    char* json_string
+    char** json_string
 )
 {
     int err;
@@ -327,7 +404,7 @@ int bdgr_badge_export(
     }
     
     root = json_pack(
-        "{sssss}", /* Creeper object */
+        "{ssssss}", /* Creeper object */
         "id", badge->id,
         "token", tokenc,
         "signature", signaturec );
@@ -336,9 +413,9 @@ int bdgr_badge_export(
         goto bdgr_badge_export_free;
     }
 
-    json_string = json_dumps( root, 0 );
-    if( !json_string ) {
-        err = 1;
+    *json_string = json_dumps( root, 0 );
+    if( !*json_string ) {
+        err = 2;
         goto bdgr_badge_export_free;
     }
     

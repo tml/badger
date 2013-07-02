@@ -48,7 +48,7 @@ int bdgr_key_generate(
 );
 
 /*
-  Initializes key using raw DSA key data of length data_len  in libtomcrypt's
+  Initializes key using raw DSA key data of length data_len in libtomcrypt's
   DSA key format.
 */
 int bdgr_key_import(
@@ -64,6 +64,44 @@ int bdgr_key_import(
 int bdgr_key_decode(
     const char* const data,
     bdgr_key* const key
+);
+
+/*
+  Export public key to raw DSA key format and places it in data of initial
+  length data_len.
+*/
+int bdgr_key_export_public(
+    const bdgr_key* const key,
+    unsigned char* const data,
+    unsigned long int* const data_len
+);
+
+/*
+  Export private key to raw DSA key format and places it in data of initial
+  length data_len.
+*/
+int bdgr_key_export_private(
+    const bdgr_key* const key,
+    unsigned char* const data,
+    unsigned long int* const data_len
+);
+
+/*
+  Export public key to base64 encoded character data. String must be freed by
+  user with free().
+*/
+int bdgr_key_encode_public(
+    const bdgr_key* const key,
+    char** string
+);
+
+/*
+  Export private key to base64 encoded character data. String must be freed by
+  user with free().
+*/
+int bdgr_key_encode_private(
+    const bdgr_key* const key,
+    char** string
 );
 
 /*
@@ -119,7 +157,7 @@ int bdgr_badge_import(
 */
 int bdgr_badge_export(
     const bdgr_badge* const badge,
-    char* json_string
+    char** json_string
 );
 
 /*

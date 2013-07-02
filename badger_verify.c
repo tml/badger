@@ -25,7 +25,7 @@ int main( const int argc, char* const* argv )
     char* rpc_server = "http://127.0.0.1:8336";
     char* rpc_creds, * rpc_user, * rpc_pass = NULL, * badge_json;
     char* badge_id, * post_data;
-    const char* const id_prefix = "nmc://badger/";
+    const char* const id_prefix = "nmc://";
     const unsigned long int id_prefix_len = strlen( id_prefix );
     const char* const rpc_fmt = "{\"method\":\"name_show\",\"params\":[\"%s\"]}";
     const unsigned long int rpc_fmt_len = strlen( rpc_fmt ) - 2;
@@ -78,11 +78,11 @@ int main( const int argc, char* const* argv )
     err = bdgr_badge_import( badge_json, &badge );
     if( err ) {
         printf( "badge import error\n" );
-        exit( 1 );
+        exit( err );
     }
 
     if( strncmp( badge.id, id_prefix, id_prefix_len ) ) {
-        printf( "badge must start with \"%s\"\n", id_prefix );
+        printf( "id must start with \"%s\"\n", id_prefix );
         exit( 1 );
     }
     badge_id = badge.id + id_prefix_len;
@@ -91,7 +91,7 @@ int main( const int argc, char* const* argv )
         rpc_pass = getpass( "Enter namecoind rpc password: " );
         rpc_pass_len = strlen( rpc_pass );
     }
-    rpc_creds = malloc( rpc_user_len + 1 + rpc_pass_len );
+    rpc_creds = malloc( rpc_user_len + rpc_pass_len + 2 );
     sprintf( rpc_creds, "%s:%s", rpc_user, rpc_pass );
 
     headers = curl_slist_append( headers, "Content-Type: text/plain" );
@@ -108,7 +108,7 @@ int main( const int argc, char* const* argv )
     
     curl_easy_perform( handle );
 
-    /* import key from response object and verify badge... */
+    /* import key from response object, parse out pubkey, and verify badge... */
 
     curl_slist_free_all( headers );
     free( post_data );
