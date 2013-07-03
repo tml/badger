@@ -2,6 +2,8 @@
 #include <string.h>
 #include <stdio.h>
 #include <unistd.h>
+#include <sys/types.h>
+#include <pwd.h>
 #include <curl/curl.h>
 #include <getopt.h>
 #include <jansson.h>
@@ -10,10 +12,9 @@
 void usage()
 {
     printf(
-        "Usage: badger_verify rpc_username badge\n"
+        "Usage: badger_verify badge\n"
         "Options:\n"
-        "-r, --rpc   http://rpc_server_address\n"
-        "-p, --pass  rpc_password\n"
+        "-r, --rpc   http://user[:pass]@rpc_server_address:port\n"
     );
 }
 
@@ -36,14 +37,11 @@ int main( const int argc, char* const* argv )
     int err;
     bdgr_badge badge;
     CURL* const handle = curl_easy_init();
-    char* rpc_server = "http://127.0.0.1:8336";
-    char* rpc_creds, * rpc_user, * rpc_pass = NULL, * badge_json;
-    char* badge_id, * post_data, * response;
-    const char* const id_prefix = "nmc://";
-    const unsigned long int id_prefix_len = strlen( id_prefix );
-    const char* const rpc_fmt = "{\"method\":\"name_show\",\"params\":[\"%s\"]}";
+    char* rpc_server = NULL, * badge_json, * badge_id, * post_data, * response;
+    const char* const id_scheme = "bdgr://";
+    const unsigned long int id_scheme_len = strlen( id_scheme );
+    const char* const rpc_fmt = "{\"method\":\"name_show\",\"params\":[\"bdgr/%s\"]}";
     const unsigned long int rpc_fmt_len = strlen( rpc_fmt ) - 2;
-    unsigned long int rpc_user_len, rpc_pass_len;
     struct curl_slist *headers = 0;
     buffer buf;
     json_t* root, * result, * value, * pubkey, * value_root;
@@ -54,22 +52,16 @@ int main( const int argc, char* const* argv )
     
     while (1) {
         static struct option long_options[] = {
-            { "rpc",  required_argument, 0, 'r' },
-            { "pass", required_argument, 0, 'p' },
+            { "server",  required_argument, 0, 's' },
             { 0, 0, 0, 0 }
         };
         int option_index = 0;
-        c = getopt_long( argc, argv, "r:u:p:", long_options, &option_index);
-        if (c == -1)
+        c = getopt_long( argc, argv, "s:", long_options, &option_index);
+        if( c == -1 )
             break;
-        switch(c) {
-        case 'r':
-            rpc_user = optarg;
-            rpc_user_len = strlen( rpc_user );
-            break;
-        case 'p':
-            rpc_pass = optarg;
-            rpc_pass_len = strlen( rpc_pass );
+        switch( c ) {
+        case 's':
+            rpc_server = optarg;
             break;
         case '?':
             break;
@@ -78,16 +70,67 @@ int main( const int argc, char* const* argv )
         }
     }
     if( optind < argc ) {
-        rpc_user = argv[ optind++ ];
-    } else {
-        usage();
-        exit( 2 );
-    }
-    if( optind < argc ) {
         badge_json = argv[ optind++ ];
     } else {
         usage();
-        exit( 2 );
+        exit( 1 );
+    }
+
+    if( rpc_server == NULL ) {
+        struct passwd* pw = getpwuid( getuid() );
+        char* rel_path = "/.namecoin/bitcoin.conf";
+        char* conf_path = malloc( strlen( pw->pw_dir ) + strlen( rel_path ) + 1);
+        char name[80], val[256], * line = NULL, * pos;
+        char* rpc_scheme = "http://";
+        char* rpcport = "8336", * rpcconnect = "127.0.0.1";
+        char* rpcuser = NULL, * rpcpass = NULL;
+        size_t len;
+        FILE* conf;
+        sprintf( conf_path, "%s%s", pw->pw_dir, rel_path );
+        conf = fopen( conf_path, "r" );
+        if( conf != NULL ) {
+            while( getline( &line, &len, conf ) != -1) {
+                pos = strstr( line, "=" );
+                if( pos == NULL ) {
+                    continue;
+                }
+                strncpy( name, line, pos - line );
+                name[ pos - line ] = '\0';
+                strncpy( val, pos + 1, strlen( line ) - ((pos + 1) - line) - 1 );
+                val[ strlen( line ) - ((pos + 1) - line) - 1 ] = '\0';
+                if( !strcmp( "rpcport", name ) ) {
+                    rpcport = malloc( strlen( val ) + 1 );
+                    strcpy( rpcport, val );
+                } else if ( !strcmp( "rpcconnect", name ) ) {
+                    rpcconnect = malloc( strlen( val ) + 1 );
+                    strcpy( rpcconnect, val );
+                } else if ( !strcmp( "rpcuser", name ) ) {
+                    rpcuser = malloc( strlen( val ) + 1 );
+                    strcpy( rpcuser, val );
+                } else if ( !strcmp( "rpcpassword", name ) ) {
+                    rpcpass = malloc( strlen( val ) + 1 );
+                    strcpy( rpcpass, val );
+                }
+            }
+        }
+        if( rpcuser == NULL ) {
+            rpc_server = malloc(
+                strlen( rpc_scheme ) + strlen( rpcconnect ) + 1 + strlen( rpcport ) + 1 );
+            sprintf( rpc_server, "%s%s:%s",
+                     rpc_scheme, rpcconnect, rpcport );
+        } else if( rpcpass == NULL ) {
+            rpc_server = malloc(
+                strlen( rpc_scheme ) + strlen( rpcuser ) + 1 +
+                strlen( rpcconnect ) + 1 + strlen( rpcport ) + 1 );
+            sprintf( rpc_server, "%s%s@%s:%s",
+                     rpc_scheme, rpcuser, rpcconnect, rpcport );
+        } else {
+            rpc_server = malloc(
+                strlen( rpc_scheme ) + strlen( rpcuser ) + 1 + strlen( rpcpass ) + 1 +
+                strlen( rpcconnect ) + 1 + strlen( rpcport ) + 1 );
+            sprintf( rpc_server, "%s%s:%s@%s:%s",
+                     rpc_scheme, rpcuser, rpcpass, rpcconnect, rpcport );
+        }
     }
 
     err = bdgr_badge_import( badge_json, &badge );
@@ -96,18 +139,11 @@ int main( const int argc, char* const* argv )
         exit( err );
     }
 
-    if( strncmp( badge.id, id_prefix, id_prefix_len ) ) {
-        fprintf( stderr, "id must start with \"%s\"\n", id_prefix );
+    if( strncmp( badge.id, id_scheme, id_scheme_len ) ) {
+        fprintf( stderr, "id must start with \"%s\"\n", id_scheme );
         exit( 2 );
     }
-    badge_id = badge.id + id_prefix_len;
-
-    if( rpc_pass == NULL ) {
-        rpc_pass = getpass( "Enter namecoind rpc password: " );
-        rpc_pass_len = strlen( rpc_pass );
-    }
-    rpc_creds = malloc( rpc_user_len + rpc_pass_len + 2 );
-    sprintf( rpc_creds, "%s:%s", rpc_user, rpc_pass );
+    badge_id = badge.id + id_scheme_len;
 
     headers = curl_slist_append( headers, "Content-Type: text/plain" );
     curl_easy_setopt( handle, CURLOPT_HTTPHEADER, headers );
@@ -117,8 +153,6 @@ int main( const int argc, char* const* argv )
     
     curl_easy_setopt( handle, CURLOPT_POSTFIELDS, post_data );
 
-    curl_easy_setopt( handle, CURLOPT_USERPWD, rpc_creds );
-    
     curl_easy_setopt( handle, CURLOPT_URL, rpc_server );
 
     buf.data = malloc( 2048 );
