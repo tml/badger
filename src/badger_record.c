@@ -68,7 +68,7 @@ int main( const int argc, char* const* argv )
             exit( err );
         }
         
-        err = bdgr_key_encode_private( &key, &key_string );
+        err = bdgr_key_encode_public( &key, &key_string );
         if( err ) {
             fprintf( stderr, "error encoding key\n" );
             exit( err );
