@@ -31,16 +31,17 @@ however the example binary (in development) will support the
 [Namecoin blockchain](http://dot-bit.org/Main_Page) as an authority.  Namecoin
 is an ideal authority because...
 
-* ...it is persistent.
-
 * ...it is public.
 
 * ...it is open source.
 
+* ...it is (nearly) impossible to censor.
+
+* ...it is persistent and will never be unavailable due to service outages or
+  company bankruptcy.
+
 * ...its records are distributed and cannot be controled or tampered with by any
   one organization or government.
-
-* ...it is (nearly) impossible to censor.
 
 It is worth noting that, while existing decentralized authentication systems do
 not necessarily specify a browser requirement, the requirement to tunnel clients
@@ -55,8 +56,9 @@ Term         | Definition
 -------------|------------------------------------------------------------------
 Client       | A person who wants to be uniquely identified at a server.
 Server       | A gathering requiring uniquely identifiable persons.
-Authority    | A storage area where Identity URLs are mapped to DSA public keys.
-Identity URL | A URL resolving to a client's base64-encoded DSA public key.
+Authority    | A storage area where Identity URLs are mapped to client records.
+Identity URL | A URL resolving to a client's record.
+Record       | A publically available object that contains a DSA public key.
 Token        | A unique piece of data issued by a server as a client invitation.
 Signature    | A client's DSA signature of a token.
 Badge        | A client-composed identity that servers can independently verify.
@@ -75,7 +77,7 @@ Timeline
 
 First, a client who wants to be uniquely identifiable generates a DSA key pair.
 The client keeps her private key private, and posts the public key at some 
-public URL.  This becomes her Identity URL.
+public URL in the form of a record.
 
 A server generates unique invitation tokens for distribution to clients.  The
 method of delivery is unspecified, but for security purposes, it is recommended
@@ -89,8 +91,8 @@ token, and the signature together in a messgae -- her badge -- and sends this
 to server.
 
 After receiving a badge, the server should verify that it issued the enclosed
-token.  The server then retrieves the client's public DSA key at the given
-Identity URL and uses it to verify the signature.
+token.  The server then retrieves the client's record at the given Identity URL
+and uses it to verify the signature.
 
 
 Data Specification
@@ -103,6 +105,8 @@ Data Specification
     "id":         Valid Identity URL.
     "token":      Base64-encoded token.
     "signature":  Base64-encoded signature.
+
+    A badge must not include any other attributes.
     
     
     Token
@@ -123,11 +127,14 @@ Data Specification
     raw (base64-decoded) token.
     
     
-    DSA Public Key
+    Record
     ----------------------------------------------------------------------------
-    
-    An authority must provide a base64-encoded DSA public key in a JSON object
-    with a "pubkey" string attribute.
+
+    JSON object containing the string attribute:
+    "dsa": Base64-encoded public DSA key.
+
+    A record may include any other attributes. A record must not be more than
+    1023 bytes in length.
 
 
 The Party: An Analogy in Plain English
@@ -199,8 +206,6 @@ TODO
 ====
 
 * Document conventions ( markdown, 80 char lines, etc. )
-
-* JSON
 
 * XRI support?
 

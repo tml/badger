@@ -11,8 +11,8 @@ void usage()
     printf(
         "Usage: badger_key\n"
         "Options:\n"
-        "-p, --pass  password\n"
-        "-k, --key   base64_public_key\n"
+        "-p, --pass  <password>\n"
+        "-k, --key   <base64-dsa-public-key>\n"
     );
 }
 
@@ -78,7 +78,7 @@ int main( const int argc, char* const* argv )
 
     root = json_pack(
         "{ss}",
-        "pubkey", key_string );
+        "dsa", key_string );
     if( !root ) {
         fprintf( stderr, "error packing json\n" );
         exit( 1 );

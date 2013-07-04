@@ -20,50 +20,90 @@
 #ifndef BADGER_H
 #define BADGER_H
 
-/*
-  The badge data structure.  Use bdgr_badge_free to release resources.
- */
-typedef struct {
-    char*             id;
-    unsigned char*    token;
-    unsigned long int token_len;
-    unsigned char*    signature;
-    unsigned long int signature_len;
-} bdgr_badge;
-
-/*
-  The badger key container.  A wrapper for libtomcrypt dsa_key.
-  Use bdgr_key_free to release resources.
- */
-typedef struct {
-    void* _impl;
-} bdgr_key;
-
-/*
-  Initializes key using password as entropy.
+/*!
+   \struct bdgr_badge
+   \brief The badge data structure.
+   \note Use bdgr_badge_free() to release resources.
 */
+struct bdgr_badge {
+    
+    /*!
+       \var bdgr_badge::id
+       A null-terminated Identity URL.
+    */
+    char*             id;
+
+    /*!
+       \var bdgr_badge::token
+       Raw token data.
+    */
+    unsigned char*    token;
+
+    /*!
+       \var bdgr_badge::token_len
+       The size in bytes of bdgr_badge::token
+    */
+    unsigned long int token_len;
+
+    /*!
+       \var bdgr_badge::signature
+       Raw signature data.
+    */
+    unsigned char*    signature;
+
+    /*!
+       \var bdgr_badge::signature_len
+       The size in bytes of bdgr_badge::signature
+    */
+    unsigned long int signature_len;
+    
+};
+typedef struct bdgr_badge bdgr_badge;
+
+/*!
+  \struct bdgr_key
+  \brief
+  The badger key container.  A wrapper for libtomcrypt dsa_key.
+  \note
+  Use bdgr_key_free() to release resources.
+ */
+struct bdgr_key {
+    void* _impl;
+};
+typedef struct bdgr_key bdgr_key;
+
+/*!
+  Initializes \c key using \c password as entropy.
+  \param[in]  password  Null-terminated user-supplied password.
+  \param[out] key       Key to initialize.
+ */
 int bdgr_key_generate(
-    const char* const password,
-    bdgr_key* const key
+    const char* password,
+    bdgr_key* key
 );
 
-/*
+/*!
   Initializes key using raw DSA key data of length data_len in libtomcrypt's
   DSA key format.
+  \param[in]  data      Raw DSA key data.
+  \param[in]  data_len  Length of \c data.
+  \param[out] key       Key to initialize.
 */
 int bdgr_key_import(
-    const unsigned char* const data,
+    const unsigned char* data,
     const unsigned long int data_len,
-    bdgr_key* const key
+    bdgr_key* key
 );
 
-/*
+/*!
   Initializes key from base64 encoded character data. Key data must be in
   libtomcrypt DSA key format.
+  \param[in]  data  Raw DSA key data.
+  \param[out] key   Key to initialize.
 */
 int bdgr_key_decode(
-    const char* const data,
-    bdgr_key* const key
+    const char* data,
+    bdgr_key* key
 );
 
 /*
@@ -81,9 +121,9 @@ int bdgr_key_export_public(
   length data_len.
 */
 int bdgr_key_export_private(
-    const bdgr_key* const key,
-    unsigned char* const data,
-    unsigned long int* const data_len
+    const bdgr_key* key,
+    unsigned char* data,
+    unsigned long int* data_len
 );
 
 /*
@@ -91,7 +131,7 @@ int bdgr_key_export_private(
   user with free().
 */
 int bdgr_key_encode_public(
-    const bdgr_key* const key,
+    const bdgr_key* key,
     char** string
 );
 
@@ -100,7 +140,7 @@ int bdgr_key_encode_public(
   user with free().
 */
 int bdgr_key_encode_private(
-    const bdgr_key* const key,
+    const bdgr_key* key,
     char** string
 );
 
@@ -108,7 +148,7 @@ int bdgr_key_encode_private(
   Releases resources owned by key.
 */
 void bdgr_key_free(
-    bdgr_key* const key
+    bdgr_key* key
 );
 
 /*
@@ -116,47 +156,68 @@ void bdgr_key_free(
   of initial length signature_len.
 */
 int bdgr_token_sign(
-    const unsigned char* const token,
+    const unsigned char* token,
     const unsigned long int token_len,
-    const bdgr_key* const key,
-    unsigned char* const signature,
-    unsigned long int* const signature_len
+    const bdgr_key* key,
+    unsigned char* signature,
+    unsigned long int* signature_len
 );
 
 /*
   Copies all data into a badge struct. Use bdgr_badge_free to release resources.
 */
 int bdgr_badge_make(
-    const char* const id,
-    const unsigned char* const token,
+    const char* id,
+    const unsigned char* token,
     const unsigned long int token_len,
-    const unsigned char* const signature,
-    const unsigned long int signature_len,
-    bdgr_badge* const badge
+    const unsigned char* signature,
+    const unsigned long signature_len,
+    bdgr_badge* badge
 );
 
 /*
-  Verify a badge came from public DSA key. The validity is written to verified.
+  Verify a badge. The verified flag will be set accordingly.
 */
 int bdgr_badge_verify(
-    const bdgr_badge* const badge,
-    const bdgr_key* const key,
-    int* const verified
+    const bdgr_badge* badge,
+    int* verified
 );
 
-/*
+/*!
+  Verify a token was signed by a public DSA key.
+*/
+int bdgr_signature_verify(
+    const unsigned char* token,
+    const unsigned long int token_len,
+    const unsigned char* signature,
+    const unsigned long int signature_len,
+    const bdgr_key* key,
+    int* verified
+);
+
+/*!
+  Parses out the DSA public \c key in \c record.
+  @param[in]   record  JSON-encoded record containing "dsa" attribute.
+  @param[out]  key     DSA key container.
+*/
+int bdgr_record_import(
+    const char* record,
+    bdgr_key* key
+);
+
+/*!
   Import a badge from JSON.
 */
 int bdgr_badge_import(
-    const char* const json_string,
-    bdgr_badge* const badge
+    const char* json_string,
+    bdgr_badge* badge
 );
 
-/*
-  Export a badge to JSON. You must call free on json_string when done.
+/*!
+  Export a badge to JSON. You must call free() on \c json_string when done.
 */
 int bdgr_badge_export(
-    const bdgr_badge* const badge,
+    const bdgr_badge* badge,
     char** json_string
 );
 
@@ -164,7 +225,15 @@ int bdgr_badge_export(
   Free resources owned by badge.
 */
 void bdgr_badge_free(
-    bdgr_badge* const badge
+    bdgr_badge* badge
+);
+
+/*!
+  Add a scheme handler to bdgr_badge_verify().
+*/
+void bdgr_scheme_handler_add(
+    char* scheme,
+    int (*handle_url)( const char* url, const char** record )
 );
 
 #endif

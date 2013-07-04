@@ -8,10 +8,10 @@
 void usage()
 {
     printf(
-        "Usage: badger_badge id base64_token\n"
+        "Usage: badger_badge <id> <base64-token>\n"
         "Options:\n"
-        "-p, --pass  password OR\n"
-        "-k, --key   base64_private_key\n"
+        "-p, --pass  <password> OR\n"
+        "-k, --key   <base64-private-key>\n"
     );
 }
 

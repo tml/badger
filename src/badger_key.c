@@ -10,7 +10,7 @@ void usage()
     printf(
         "Usage: badger_key\n"
         "Options:\n"
-        "-p, --pass  password\n"
+        "-p, --pass  <password>\n"
     );
 }
 
