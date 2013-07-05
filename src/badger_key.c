@@ -75,13 +75,17 @@ int main( const int argc, char* const* argv )
 
     err = bdgr_key_generate( pass, &key );
     if( err ) {
-        fprintf( stderr, "error generating key\n" );
+        fprintf( stderr,
+                 "error generating key: %s\n",
+                 bdgr_error_string( err ));
         exit( err );
     }
 
     err = bdgr_key_encode_private( &key, &string );
     if( err ) {
-        fprintf( stderr, "error encoding key\n" );
+        fprintf( stderr,
+                 "error encoding key: %s\n",
+                 bdgr_error_string( err ));
         exit( err );
     }
 
