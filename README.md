@@ -141,15 +141,15 @@ Data Specification
         DSAPublicKey ::= SEQUENCE {
             publicFlags  BIT STRING(0), -- must be 0
             g            INTEGER      , -- base generator
-                                      , -- check that g^q mod p == 1
-                                      , -- and that 1 < g < p - 1
+                                        -- check that g^q mod p == 1
+                                        -- and that 1 < g < p - 1
             p            INTEGER      , -- prime modulus
             q            INTEGER      , -- order of sub-group
-                                      , -- (must be prime)
+                                        -- (must be prime)
             y            INTEGER      , -- public key, specifically,
-                                      , -- g^x mod p,
-                                      , -- check that y^q mod p == 1
-                                      , -- and that 1 < y < p - 1
+                                        -- g^x mod p,
+                                        -- check that y^q mod p == 1
+                                        -- and that 1 < y < p - 1
         }
 
 
