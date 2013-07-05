@@ -106,19 +106,25 @@ int bdgr_key_decode(
     bdgr_key* key
 );
 
-/*
-  Export public key to raw DSA key format and places it in data of initial
-  length data_len.
+/*!
+  Export public \c key to raw DSA key format and places it in \c data of initial
+  length \c data_len.
+  \param[in]     key       key to export
+  \param[out]    data      data buffer to write into
+  \param[in,out] data_len  initial size of data / exported size of key
 */
 int bdgr_key_export_public(
-    const bdgr_key* const key,
-    unsigned char* const data,
-    unsigned long int* const data_len
+    const bdgr_key* key,
+    unsigned char* data,
+    unsigned long int* data_len
 );
 
-/*
-  Export private key to raw DSA key format and places it in data of initial
-  length data_len.
+/*!
+  Export private \c key to raw DSA key format and places it in \c data of
+  initial length \c data_len.
+  \param[in]     key       key to export
+  \param[out]    data      data buffer to write into
+  \param[in,out] data_len  initial size of data / exported size of key
 */
 int bdgr_key_export_private(
     const bdgr_key* key,
@@ -126,34 +132,45 @@ int bdgr_key_export_private(
     unsigned long int* data_len
 );
 
-/*
-  Export public key to base64 encoded character data. String must be freed by
-  user with free().
+/*!
+  Export public \c key to base64 encoded character data.
+  \note \c string must be freed by user with free().
+  \param[in]  key     key to encode
+  \param[out] string  base64 character string
 */
 int bdgr_key_encode_public(
     const bdgr_key* key,
     char** string
 );
 
-/*
-  Export private key to base64 encoded character data. String must be freed by
-  user with free().
+/*!
+  Export private \c key to base64 encoded character data.
+  \note String must be freed by user with free().
+  \param[in]  key
+  \param[in]  key     key to encode
+  \param[out] string  base64 character string
 */
 int bdgr_key_encode_private(
     const bdgr_key* key,
     char** string
 );
 
-/*
-  Releases resources owned by key.
+/*!
+  Releases resources owned by \c key.
+  \param key  key to release
 */
 void bdgr_key_free(
     bdgr_key* key
 );
 
-/*
-  Signs a token using a private DSA key.  The signature is written to signature
-  of initial length signature_len.
+/*!
+  Signs \c token using a private DSA key.  The signature is written to
+  \c signature of initial length \c signature_len.
+  \param[in]     token          token to sign
+  \param[in]     token_len      length of token buffer
+  \param[in]     key            key to use when signing
+  \param[out]    signature      buffer to write to
+  \param[in,out] signature_len  initial length of buffer / written length
 */
 int bdgr_token_sign(
     const unsigned char* token,
@@ -163,8 +180,9 @@ int bdgr_token_sign(
     unsigned long int* signature_len
 );
 
-/*
-  Copies all data into a badge struct. Use bdgr_badge_free to release resources.
+/*!
+  Copies all data into a badge struct.
+  \note Use bdgr_badge_free() to release resources.
 */
 int bdgr_badge_make(
     const char* id,
@@ -175,8 +193,10 @@ int bdgr_badge_make(
     bdgr_badge* badge
 );
 
-/*
-  Verify a badge. The verified flag will be set accordingly.
+/*!
+  Verify \c badge. The \c verified flag will be set accordingly.
+  \param[in]  badge     badge to verify
+  \param[out] verified  pointer to flag that will be set if to 1 if verified
 */
 int bdgr_badge_verify(
     const bdgr_badge* badge,
@@ -184,7 +204,7 @@ int bdgr_badge_verify(
 );
 
 /*!
-  Verify a token was signed by a public DSA key.
+  Verify a token was signed by public DSA \c key.
 */
 int bdgr_signature_verify(
     const unsigned char* token,
@@ -207,6 +227,8 @@ int bdgr_record_import(
 
 /*!
   Import a badge from JSON.
+  \param[in]  json_string  JSON string to import
+  \param[out] badge        badge to initialize
 */
 int bdgr_badge_import(
     const char* json_string,
@@ -214,15 +236,18 @@ int bdgr_badge_import(
 );
 
 /*!
-  Export a badge to JSON. You must call free() on \c json_string when done.
+  Export a badge to JSON.
+  \note You must call free() on \c json_string when done.
+  \param[in]  badge        badge to export to JSON
+  \param[out] json_string  JSON string of badge
 */
 int bdgr_badge_export(
     const bdgr_badge* badge,
     char** json_string
 );
 
-/*
-  Free resources owned by badge.
+/*!
+  Free resources owned by \c badge.
 */
 void bdgr_badge_free(
     bdgr_badge* badge
