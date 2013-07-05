@@ -2,9 +2,9 @@ libbadger
 =========
 
 This library has functions for retrieving records from the Namecoin blockchain.
-It is implemented as the URI scheme "nmc:<block-name>".  To take advantage
-of the existing id namespace, the "id:<name>" URI scheme can be used as
-shorthand for "nmc:id/<name>".
+It is implemented as the URI scheme `nmc:<block-name>`.  To take advantage
+of the existing id namespace, the `id:<name>` URI scheme can be used as
+shorthand for `nmc:id/<name>`.
 
 If you would like to use libbadger without supporting namecoin records,
 you can skip the next section.
