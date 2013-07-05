@@ -10,7 +10,7 @@ If you would like to use libbadger without supporting namecoin records,
 you can skip the next section.
 
 
-Installing and Configuring namecoind
+Building and Configuring namecoind
 ====================================
 
 Configure namecoind to run as a daemon:
@@ -30,7 +30,11 @@ Build and run namecoind:
     $ make -f makefile.unix  # use correct makefile for your system
     $ ./namecoind
 
-Now that the namecoin RPC service is running, you can build libbadger:
+
+Now that the namecoin RPC service is running, you can build libbadger.
+
+Building libbadger
+==================
 
     $ git clone http://github.com/johnoliverdriscoll/badger
     $ mkdir badger_build && cd badger_build
