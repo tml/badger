@@ -5,8 +5,9 @@ static bdgr_err bdgr_last_err;
 static int bdgr_last_err_line;
 static int bdgr_last_crypt_err = CRYPT_OK;
 static json_error_t bdgr_g_json_error;
-static char bdgr_error_string_buffer[2048];
-static char bdgr_json_error_string_buffer[1024];
+static char bdgr_g_error_string[1024];
+static char bdgr_g_json_error_string[1024];
+static char bdgr_g_rpc_error_string[1024];
 
 int bdgr_error()
 {
@@ -37,6 +38,14 @@ json_error_t *bdgr_json_error()
     return &bdgr_g_json_error;
 }
 
+void bdgr_rpc_error( const char* err, const int line )
+{
+    strncpy( bdgr_g_rpc_error_string,
+             err,
+             sizeof( bdgr_g_rpc_error_string ));
+    bdgr_check( 1, bdgr_rpc_err, line );
+}
+
 static const char* bdgr_short_error_string( const int err )
 {
     switch( err ) {
@@ -51,10 +60,10 @@ static const char* bdgr_short_error_string( const int err )
     case bdgr_register_prng_err:
         return "Failed to register PRNG";
     case bdgr_json_load_err:
-        sprintf( bdgr_json_error_string_buffer,
+        sprintf( bdgr_g_json_error_string,
                  "Failed to load JSON string: %s",
                  bdgr_json_error()->text );
-        return bdgr_json_error_string_buffer;
+        return bdgr_g_json_error_string;
     case bdgr_json_pack_err:
         return "Failed to pack JSON values";
     case bdgr_json_dump_err:
@@ -85,19 +94,29 @@ static const char* bdgr_short_error_string( const int err )
         return "Failed to allocate signature string";
     case bdgr_response_overflow:
         return "Response data overflow";
-    case bdgr_rpc_result_missing_err:
+    case bdgr_json_result_missing_err:
         return "Invalid RPC response (missing result attribute)";
-    case bdgr_rpc_result_null_err:
-        return "Name not found";
-    case bdgr_rpc_result_not_object_err:
+    case bdgr_json_result_not_object_err:
         return "Invalid RPC response "
             "(result is not null and not an object)";
-    case bdgr_rpc_value_missing_err:
+    case bdgr_json_value_missing_err:
         return "Invalid RPC response (missing value attribute)";
-    case bdgr_rpc_value_not_string_err:
+    case bdgr_json_value_not_string_err:
         return "Invalid RPC response (value not a string)";
-    case bdgr_rpc_value_err:
+    case bdgr_json_value_err:
         return "Failed to allocate value string";
+    case bdgr_json_error_missing_err:
+        return "Invalid RPC error (missing error attribute)";
+    case bdgr_json_error_not_object_err:
+        return "Invalid RPC error (error is not an object)";
+    case bdgr_json_error_message_missing_err:
+        return "Invalid RPC error (error message missing)";
+    case bdgr_json_error_message_not_string_err:
+        return "Invalid RPC error (error message is not a string)";
+    case bdgr_json_error_message_err:
+        return "Failed to allocate RPC error message";
+    case bdgr_rpc_err:
+        return bdgr_g_rpc_error_string;
     case bdgr_password_len_err:
         return "Password cannot be more than 64 characters";
     case bdgr_unsupported_scheme_err:
@@ -110,9 +129,9 @@ const char* bdgr_error_string( const int err )
 {
     const char* string = bdgr_short_error_string( err );
 #ifndef NDEBUG
-    sprintf( bdgr_error_string_buffer,
+    sprintf( bdgr_g_error_string,
              "%s (line %d)", string, bdgr_last_err_line );
-    return bdgr_error_string_buffer;
+    return bdgr_g_error_string;
 #endif
     return string;
 }

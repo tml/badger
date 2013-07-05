@@ -24,13 +24,19 @@ typedef enum {
     bdgr_json_signature_missing_err,
     bdgr_json_signature_not_string_err,
     bdgr_json_signature_err,
+    bdgr_json_result_missing_err,
+    bdgr_json_result_not_object_err,
+    bdgr_json_result_err,
+    bdgr_json_value_missing_err,
+    bdgr_json_value_not_string_err,
+    bdgr_json_value_err,
+    bdgr_json_error_missing_err,
+    bdgr_json_error_not_object_err,
+    bdgr_json_error_message_missing_err,
+    bdgr_json_error_message_not_string_err,
+    bdgr_json_error_message_err,
+    bdgr_rpc_err,
     bdgr_response_overflow,
-    bdgr_rpc_result_missing_err,
-    bdgr_rpc_result_null_err,
-    bdgr_rpc_result_not_object_err,
-    bdgr_rpc_value_missing_err,
-    bdgr_rpc_value_not_string_err,
-    bdgr_rpc_value_err,
     bdgr_password_len_err,
     bdgr_unsupported_scheme_err
 } bdgr_err;
@@ -42,5 +48,7 @@ int bdgr_check( int ret, bdgr_err err, int line );
 int bdgr_crypt( int ret, int line );
 
 json_error_t *bdgr_json_error();
+
+void bdgr_rpc_error( const char* err, int line );
 
 #endif

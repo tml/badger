@@ -719,13 +719,13 @@ static int bdgr_scheme_nmc( const char* const url, const char** record )
     
     CURL* const handle = curl_easy_init();
     char* post_data;
-    const char* block_name;
+    const char* block_name, * rpc_error;
     static const char* const rpc_fmt =
         "{\"method\":\"name_show\",\"params\":[\"%s\"]}";
     const unsigned long int rpc_fmt_len = strlen( rpc_fmt ) - 2;
     struct curl_slist *headers = NULL;
     bdgr_buffer buf;
-    json_t* root, * result, * value;
+    json_t* root, * result, * value, * error, * message;
     static char rpc_server[1024];
     static int init = 0;
     
@@ -827,39 +827,74 @@ static int bdgr_scheme_nmc( const char* const url, const char** record )
     
     result = json_object_get( root, "result" );
     bdgr_check( result == NULL,
-                bdgr_rpc_result_missing_err, __LINE__ );
+                bdgr_json_result_missing_err, __LINE__ );
     if( bdgr_error() ) {
         goto bdgr_scheme_nmc_free;
     }
     
-    bdgr_check( json_is_null( result ),
-                bdgr_rpc_result_null_err, __LINE__ );
-    if( bdgr_error() ) {
+    if( json_is_null( result )) {
+
+        /* Error with RPC call */
+        error = json_object_get( root, "error" );
+        bdgr_check( error == NULL,
+                    bdgr_json_error_missing_err, __LINE__ );
+        if( bdgr_error() ) {
+            goto bdgr_scheme_nmc_free;
+        }
+
+        bdgr_check( !json_is_object( error ),
+                    bdgr_json_error_not_object_err, __LINE__ );
+        if( bdgr_error() ) {
+            goto bdgr_scheme_nmc_free;
+        }
+
+        message = json_object_get( error, "message" );
+        bdgr_check( message == NULL,
+                    bdgr_json_error_message_missing_err, __LINE__ );
+        if( bdgr_error() ) {
+            goto bdgr_scheme_nmc_free;
+        }
+
+        bdgr_check( !json_is_string( message ),
+                    bdgr_json_error_message_not_string_err, __LINE__ );
+        if( bdgr_error() ) {
+            goto bdgr_scheme_nmc_free;
+        }
+
+        rpc_error = json_string_value( message );
+        bdgr_check( rpc_error == NULL,
+                    bdgr_json_error_message_err, __LINE__ );
+        if( bdgr_error() ) {
+            goto bdgr_scheme_nmc_free;
+        }
+        
+        bdgr_rpc_error( rpc_error, __LINE__ );
         goto bdgr_scheme_nmc_free;
+        
     }
     
     bdgr_check( !json_is_object( result ),
-                bdgr_rpc_result_not_object_err, __LINE__ );
+                bdgr_json_result_not_object_err, __LINE__ );
     if( bdgr_error() ) {
         goto bdgr_scheme_nmc_free;
     }
     
     value = json_object_get( result, "value" );
     bdgr_check( value == NULL,
-                bdgr_rpc_value_missing_err, __LINE__ );
+                bdgr_json_value_missing_err, __LINE__ );
     if( bdgr_error() ) {
         goto bdgr_scheme_nmc_free;
     }
 
     bdgr_check( !json_is_string( value ),
-                bdgr_rpc_value_not_string_err, __LINE__ );
+                bdgr_json_value_not_string_err, __LINE__ );
     if( bdgr_error() ) {
         goto bdgr_scheme_nmc_free;
     }
 
     *record = json_string_value( value );
     bdgr_check( *record == NULL,
-                bdgr_rpc_value_err, __LINE__ );
+                bdgr_json_value_err, __LINE__ );
     if( bdgr_error() ) {
         goto bdgr_scheme_nmc_free;
     }
