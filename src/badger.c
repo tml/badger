@@ -685,8 +685,7 @@ void bdgr_badge_free(
 typedef struct {
     char* data;
     unsigned long int size;
-    unsigned long int pos;
-    int overflow;
+    bdgr_err error;
 } bdgr_buffer;
 
 static size_t bdgr_record_data(
@@ -697,12 +696,21 @@ static size_t bdgr_record_data(
 {
     bdgr_buffer *buf = (bdgr_buffer*)_buf;
     int sane_size = size*nmemb;
-    if( buf->pos + sane_size > buf->size ) {
-        buf->overflow += (buf->pos + sane_size) - buf->size;
-        sane_size = buf->size - buf->pos;
+    if( buf->data == NULL ) {
+        buf->data = malloc( sane_size );
+        buf->size = 0;
+        buf->error = bdgr_no_err;
+        bdgr_check( buf->data == NULL, bdgr_malloc_err, __LINE__ );
+    } else  {
+        buf->data = realloc( buf->data, buf->size + sane_size );
+        bdgr_check( buf->data == NULL, bdgr_realloc_err, __LINE__ );
     }
-    memcpy( buf->data + buf->pos, ptr, sane_size );
-    buf->pos += sane_size;
+    if( bdgr_error() ) {
+        buf->error = bdgr_error();
+        return 0;
+    }
+    memcpy( buf->data + buf->size, ptr, sane_size );
+    buf->size += sane_size;
     return size;
 }
 
@@ -710,7 +718,7 @@ static int bdgr_scheme_nmc( const char* const url, const char** record )
 {
     
     CURL* const handle = curl_easy_init();
-    char* post_data, * response;
+    char* post_data;
     const char* block_name;
     static const char* const rpc_fmt =
         "{\"method\":\"name_show\",\"params\":[\"%s\"]}";
@@ -791,31 +799,26 @@ static int bdgr_scheme_nmc( const char* const url, const char** record )
     sprintf( post_data, rpc_fmt, block_name );
     
     /* initialize response data buffer */
-    buf.pos = 0;
-    buf.overflow = 0;
-    buf.size = 2048;
-    buf.data = malloc( buf.size );
-    bdgr_check( buf.data == NULL, bdgr_malloc_err, __LINE__ );
-    if( bdgr_error() ) {
-        goto bdgr_scheme_nmc_free;
-    }
-    
+    buf.data = NULL;
     curl_easy_setopt( handle, CURLOPT_URL, rpc_server );
     curl_easy_setopt( handle, CURLOPT_HTTPHEADER, headers );
     curl_easy_setopt( handle, CURLOPT_POSTFIELDS, post_data );
     curl_easy_setopt( handle, CURLOPT_WRITEFUNCTION, bdgr_record_data );
     curl_easy_setopt( handle, CURLOPT_WRITEDATA, &buf );
     curl_easy_perform( handle );
-    
-    response = malloc( buf.pos+1 );
-    bdgr_check( response == NULL, bdgr_malloc_err, __LINE__ );
+
+    bdgr_check( buf.error != bdgr_no_err, buf.error, __LINE__ );
     if( bdgr_error() ) {
-        goto bdgr_scheme_nmc_free;
+        return bdgr_error();
     }
-    memcpy( response, buf.data, buf.pos );
-    response[ buf.pos ] = '\0';
+    buf.data = realloc( buf.data, buf.size + 1 );
+    bdgr_check( buf.data == NULL, bdgr_realloc_err, __LINE__ );
+    if( bdgr_error() ) {
+        return bdgr_error();
+    }
+    buf.data[ buf.size++ ] = '\0';
     
-    root = json_loads( response, 0, bdgr_json_error() );
+    root = json_loads( buf.data, 0, bdgr_json_error() );
     bdgr_check( root == NULL,
                 bdgr_json_load_err, __LINE__ );
     if( bdgr_error() ) {
@@ -867,9 +870,6 @@ static int bdgr_scheme_nmc( const char* const url, const char** record )
     if( headers != NULL ) {
         curl_slist_free_all( headers );
     }
-    if( response != NULL ) {
-        free( response );
-    }
     if( post_data != NULL ) {
         free( post_data );
     }
@@ -906,10 +906,7 @@ static int bdgr_scheme_http( const char* const url, const char** record )
 {
     CURL* const handle = curl_easy_init();
     bdgr_buffer buf;
-    buf.pos = 0;
-    buf.overflow = 0;
-    buf.size = 1024;
-    buf.data = malloc( buf.size );
+    buf.data = NULL;
     bdgr_check( buf.data == NULL, bdgr_malloc_err, __LINE__ );
     if( bdgr_error() ) {
         return bdgr_error();
@@ -919,7 +916,18 @@ static int bdgr_scheme_http( const char* const url, const char** record )
     curl_easy_setopt( handle, CURLOPT_WRITEDATA, &buf );
     curl_easy_perform( handle );
     curl_easy_cleanup( handle );
-    buf.data[ buf.pos ] = '\0';
+    
+    bdgr_check( buf.error != bdgr_no_err, buf.error, __LINE__ );
+    if( bdgr_error() ) {
+        return bdgr_error();
+    }
+    buf.data = realloc( buf.data, buf.size + 1 );
+    bdgr_check( buf.data == NULL, bdgr_realloc_err, __LINE__ );
+    if( bdgr_error() ) {
+        return bdgr_error();
+    }
+    buf.data[ buf.size++ ] = '\0';
+    
     *record = buf.data;
     return bdgr_no_err;
 }

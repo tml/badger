@@ -6,6 +6,7 @@
 typedef enum {
     bdgr_no_err,
     bdgr_malloc_err,
+    bdgr_realloc_err,
     bdgr_crypt_err,
     bdgr_register_prng_err,
     bdgr_json_load_err,
@@ -23,6 +24,7 @@ typedef enum {
     bdgr_json_signature_missing_err,
     bdgr_json_signature_not_string_err,
     bdgr_json_signature_err,
+    bdgr_response_overflow,
     bdgr_rpc_result_missing_err,
     bdgr_rpc_result_null_err,
     bdgr_rpc_result_not_object_err,

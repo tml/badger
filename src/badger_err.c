@@ -43,7 +43,9 @@ static const char* bdgr_short_error_string( const int err )
     case bdgr_no_err:
         return "No error occurred";
     case bdgr_malloc_err:
-        return "Out of memory";
+        return "Failed to malloc memory";
+    case bdgr_realloc_err:
+        return "Failed to realloc memory";
     case bdgr_crypt_err:
         return error_to_string( bdgr_last_crypt_err );
     case bdgr_register_prng_err:
@@ -81,6 +83,8 @@ static const char* bdgr_short_error_string( const int err )
         return "Badge signature not a string";
     case bdgr_json_signature_err:
         return "Failed to allocate signature string";
+    case bdgr_response_overflow:
+        return "Response data overflow";
     case bdgr_rpc_result_missing_err:
         return "Invalid RPC response (missing result attribute)";
     case bdgr_rpc_result_null_err:
