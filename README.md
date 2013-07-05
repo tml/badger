@@ -136,6 +136,15 @@ Data Specification
     A record may include any other attributes.
 
 
+Blind Signing Attacks
+=========================
+
+The DSA key must never be used to encrypt a message.  An encrypted message
+can be passed to the client as the server token, tricking the client into
+[decrypting sensitive information]
+(http://en.wikipedia.org/wiki/Blind_signature#Dangers_of_blind_signing).
+
+
 The Party: An Analogy in Plain English
 ======================================
 
@@ -199,21 +208,3 @@ a rousing success.
 
 Alice, now having a public code on record, can use the same badge printer to get
 into any other party she receives an invitation to.
-
-
-TODO
-====
-
-* Document conventions ( markdown, 80 char lines, etc. )
-
-* XRI support?
-
-* Library
-
-* Sample verification binary
-
-* Some note to affect that the DSA key shall never be used to encrypt a message
-  and a reference to something on RSA blind signing attacks:
-  http://en.wikipedia.org/wiki/Blind_signature#Dangers_of_blind_signing
-
-* Table of contents?
