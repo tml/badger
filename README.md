@@ -133,8 +133,7 @@ Data Specification
     JSON object containing the string attribute:
     "dsa": Base64-encoded public DSA key.
 
-    A record may include any other attributes. A record must not be more than
-    1023 bytes in length.
+    A record may include any other attributes.
 
 
 The Party: An Analogy in Plain English

@@ -1,3 +1,22 @@
+/*
+  Copyright 2013 John Driscoll
+   
+  This file is part of Badger.
+
+  Badger is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+
+  Badger is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with Badger.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
@@ -41,7 +60,9 @@ int main( const int argc, char* const* argv )
     }
     err = bdgr_key_decode( key_string, &key );
     if( err ) {
-        fprintf( stderr, "error decoding key\n" );
+        fprintf( stderr,
+                 "error decoding key: %s\n",
+                 bdgr_error_string( err ));
         exit( err );
     }
         
@@ -53,25 +74,33 @@ int main( const int argc, char* const* argv )
     tokenb = malloc( tokenb_len );
     err = base64_decode( (unsigned char*)token, token_len, tokenb, &tokenb_len );
     if( err ) {
-        fprintf( stderr, "error decoding token\n" );
+        fprintf( stderr,
+                 "error decoding token: %s\n",
+                 bdgr_error_string( err ));
         exit( err );
     }
 
     err = bdgr_token_sign( tokenb, tokenb_len, &key, signature, &signature_len );
     if( err ) {
-        fprintf( stderr, "error signing token\n" );
+        fprintf( stderr,
+                 "error signing token: %s\n",
+                 bdgr_error_string( err ));
         exit( err );
     }
 
     err = bdgr_badge_make( id, tokenb, tokenb_len, signature, signature_len, &badge );
     if( err ) {
-        fprintf( stderr, "error making badge\n" );
+        fprintf( stderr,
+                 "error making badge: %s\n",
+                 bdgr_error_string( err ));
         exit( err );
     }
     
     err = bdgr_badge_export( &badge, &badge_string );
     if( err ) {
-        fprintf( stderr, "error exporting badge\n" );
+        fprintf( stderr,
+                 "error exporting badge: %s\n",
+                 bdgr_error_string( err ));
         exit( err );
     }
 

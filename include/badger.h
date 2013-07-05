@@ -21,6 +21,11 @@
 #define BADGER_H
 
 /*!
+  Return a string describing \c err.
+*/
+const char* bdgr_error_string( int err );
+
+/*!
    \struct bdgr_badge
    \brief The badge data structure.
    \note Use bdgr_badge_free() to release resources.
@@ -31,31 +36,31 @@ struct bdgr_badge {
        \var bdgr_badge::id
        A null-terminated Identity URL.
     */
-    char*             id;
+    const char*             id;
 
     /*!
        \var bdgr_badge::token
        Raw token data.
     */
-    unsigned char*    token;
+    const unsigned char*    token;
 
     /*!
        \var bdgr_badge::token_len
        The size in bytes of bdgr_badge::token
     */
-    unsigned long int token_len;
+    const unsigned long int token_len;
 
     /*!
        \var bdgr_badge::signature
        Raw signature data.
     */
-    unsigned char*    signature;
+    const unsigned char*    signature;
 
     /*!
        \var bdgr_badge::signature_len
        The size in bytes of bdgr_badge::signature
     */
-    unsigned long int signature_len;
+    const unsigned long int signature_len;
     
 };
 typedef struct bdgr_badge bdgr_badge;
@@ -183,6 +188,12 @@ int bdgr_token_sign(
 /*!
   Copies all data into a badge struct.
   \note Use bdgr_badge_free() to release resources.
+  \param[in]  id             identity url character string
+  \param[in]  token          raw token data
+  \param[in]  token_len      length of token buffer
+  \param[in]  signature      raw signature data
+  \param[in]  signature_len  length of signature buffer
+  \param[out] badge          badge to initialize
 */
 int bdgr_badge_make(
     const char* id,
@@ -196,7 +207,7 @@ int bdgr_badge_make(
 /*!
   Verify \c badge. The \c verified flag will be set accordingly.
   \param[in]  badge     badge to verify
-  \param[out] verified  pointer to flag that will be set if to 1 if verified
+  \param[out] verified  pointer to flag that will be set to 1 if verified
 */
 int bdgr_badge_verify(
     const bdgr_badge* badge,
@@ -205,6 +216,12 @@ int bdgr_badge_verify(
 
 /*!
   Verify a token was signed by public DSA \c key.
+  \param[in]  token          raw token data
+  \param[in]  token_len      length of token buffer
+  \param[in]  signature      raw signature data
+  \param[in]  signature_len  length of signature buffer
+  \param[in]  key            public DSA key to verify signature with
+  \param[out] verified       pointer to flag that will be set to 1 if verified
 */
 int bdgr_signature_verify(
     const unsigned char* token,
@@ -217,8 +234,8 @@ int bdgr_signature_verify(
 
 /*!
   Parses out the DSA public \c key in \c record.
-  @param[in]   record  JSON-encoded record containing "dsa" attribute.
-  @param[out]  key     DSA key container.
+  \param[in]   record  JSON-encoded record containing "dsa" attribute.
+  \param[out]  key     DSA key container.
 */
 int bdgr_record_import(
     const char* record,
@@ -256,7 +273,7 @@ void bdgr_badge_free(
 /*!
   Add a scheme handler to bdgr_badge_verify().
 */
-void bdgr_scheme_handler_add(
+int bdgr_scheme_handler_add(
     char* scheme,
     int (*handle_url)( const char* url, const char** record )
 );

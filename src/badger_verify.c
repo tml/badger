@@ -1,3 +1,22 @@
+/*
+  Copyright 2013 John Driscoll
+   
+  This file is part of Badger.
+
+  Badger is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+
+  Badger is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with Badger.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -37,20 +56,24 @@ int main( const int argc, char* const* argv )
 
     err = bdgr_badge_import( badge_string, &badge );
     if( err ) {
-        fprintf( stderr, "badge import error\n" );
+        fprintf( stderr,
+                 "badge import error: %s\n",
+                 bdgr_error_string( err ));
         exit( err );
     }
-    
+
     err = bdgr_badge_verify( &badge, &verified );
     if( err ) {
-        fprintf( stderr, "error verifying badge\n" );
+        fprintf( stderr,
+                 "error verifying badge: %s\n",
+                 bdgr_error_string( err ));
         exit( err );
     }
 
     if( verified ) {
-        fprintf( stderr, "Verified" );
+        puts( "Signature verified" );
     } else {
-        fprintf( stderr, "Not verified" );
+        puts( "Signature does not match id" );
         exit( 1 );
     }
     
