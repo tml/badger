@@ -16,14 +16,20 @@ add_library( badger SHARED src/badger.c src/badger_err.c )
 target_link_libraries( badger
   ${LibTomCrypt_LIBRARIES} ${JANSSON_LIBRARIES} ${CURL_LIBRARIES} )
 
-add_executable( badger_record src/badger_record.c )
-target_link_libraries( badger_record badger )
+add_executable( badger-record src/badger_record.c )
+target_link_libraries( badger-record badger )
 
-add_executable( badger_key src/badger_key.c )
-target_link_libraries( badger_key badger )
+add_executable( badger-key src/badger_key.c )
+target_link_libraries( badger-key badger )
 
-add_executable( badger_badge src/badger_badge.c )
-target_link_libraries( badger_badge badger )
+add_executable( badger-badge src/badger_badge.c )
+target_link_libraries( badger-badge badger )
 
-add_executable( badger_verify src/badger_verify.c )
-target_link_libraries( badger_verify badger )
+add_executable( badger-verify src/badger_verify.c )
+target_link_libraries( badger-verify badger )
+
+install( FILES include/badger.h DESTINATION include )
+install( TARGETS badger badger-record badger-key badger-badge badger-verify
+  RUNTIME DESTINATION bin
+  LIBRARY DESTINATION lib
+)

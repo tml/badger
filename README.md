@@ -202,7 +202,7 @@ into any other party she receives an invitation to.
 
 
 Blind Signing Attacks
-=========================
+=====================
 
 The DSA key must never be used to encrypt a message.  An encrypted message
 can be passed to the client as the server token, tricking the client into
