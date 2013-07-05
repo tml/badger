@@ -2,16 +2,16 @@
 #include <string.h>
 #include <stdio.h>
 #include <tomcrypt.h>
-#include <getopt.h>
 #include <badger.h>
+
+#define BUF_SIZE 1024
 
 void usage()
 {
-    printf(
+    fprintf(
+        stderr,
         "Usage: badger_badge <id> <base64-token>\n"
-        "Options:\n"
-        "-p, --pass  <password> OR\n"
-        "-k, --key   <base64-private-key>\n"
+        "A record must be available from stdin.\n"
     );
 }
 
@@ -21,70 +21,33 @@ int main( const int argc, char* const* argv )
     int err;
     bdgr_key key;
     bdgr_badge badge;
-    char* pass = NULL, * key_string = NULL, * id, * token, * badge_string = NULL;
+    char* key_string, * id, * token, * badge_string;
     unsigned long int token_len, tokenb_len, signature_len = 2048;
     unsigned char* tokenb, * signature = malloc( signature_len );
-    int c;
+    char buffer[BUF_SIZE];
+    size_t key_len = 1;
+
+    if( argc != 3 ) {
+        usage();
+        exit( 1 );
+    }
     
-    while (1) {
-        static struct option long_options[] = {
-            { "pass", required_argument, 0, 'p' },
-            { "key",  required_argument, 0, 'k' },
-            { 0, 0, 0, 0 }
-        };
-        int option_index = 0;
-        c = getopt_long( argc, argv, "p:k:", long_options, &option_index);
-        if (c == -1)
-            break;
-        switch(c) {
-        case 'p':
-            pass = optarg;
-            break;
-        case 'k':
-            key_string = optarg;
-            break;
-        case '?':
-            break;
-        default:
-            abort();
-        }
+    key_string = malloc( BUF_SIZE );
+    key_string[0] = '\0';
+    while( fgets( buffer, BUF_SIZE, stdin )) {
+        key_len += strlen( buffer );
+        key_string = realloc( key_string, key_len );
+        strcat( key_string, buffer );
     }
-    if( optind < argc ) {
-        id = argv[ optind++ ];
-    } else {
-        usage();
-        exit( 1 );
+    err = bdgr_key_decode( key_string, &key );
+    if( err ) {
+        fprintf( stderr, "error decoding key\n" );
+        exit( err );
     }
-    if( optind < argc ) {
-        token = argv[ optind++ ];
-        token_len = strlen( token );
-    } else {
-        usage();
-        exit( 1 );
-    }
-    if( optind != argc ) {
-        usage();
-        exit( 1 );
-    }
-
-    if( pass == NULL && key_string == NULL ) {
-        usage();
-        exit( 1 );
-    }
-
-    if( pass != NULL ) {
-        err = bdgr_key_generate( pass, &key );
-        if( err ) {
-            fprintf( stderr, "error generating key\n" );
-            exit( err );
-        }
-    } else {
-        err = bdgr_key_decode( key_string, &key );
-        if( err ) {
-            fprintf( stderr, "error decoding key\n" );
-            exit( err );
-        }
-    }
+        
+    id = argv[ 1 ];
+    token = argv[ 2 ];
+    token_len = strlen( token );
 
     tokenb_len = token_len;
     tokenb = malloc( tokenb_len );

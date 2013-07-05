@@ -40,7 +40,7 @@ int bdgr_key_generate(
 {
     int err;
     prng_state prng;
-    char* sane_pass;
+    char sane_pass[64];
     int pass_len = strlen( password );
 
     bdgr_init();
@@ -63,15 +63,17 @@ int bdgr_key_generate(
     }
 
     /* Copy the pass to a properly sized space */
-    sane_pass = malloc( 64 );
     memcpy( sane_pass, password, pass_len );
-    memset( sane_pass + pass_len, 0, 64 - pass_len );
+    memset( sane_pass + pass_len, 0, sizeof( sane_pass ) - pass_len );
 
     /* Make sure the prng buffer starts fresh */
     memset( prng.rc4.buf, 0, 256 );
 
     /* Seed with Alice's password */
-    err = rc4_add_entropy( (unsigned char*)sane_pass, 64, &prng );
+    err = rc4_add_entropy(
+        (unsigned char*)sane_pass,
+        sizeof( sane_pass ),
+        &prng );
     if ( err != CRYPT_OK ) {
         goto bdgr_key_generate_free;
     }
@@ -95,12 +97,9 @@ int bdgr_key_generate(
     
     /* Scrub any copies of the password from memory */
     memset( prng.rc4.buf, 0, 256 );
+    memset( sane_pass, 0, sizeof( sane_pass ));
     
     rc4_done( &prng );
-    if( sane_pass ) {
-        memset( sane_pass, 0, 64 );
-        free( sane_pass );
-    }
 
     return err;
     
@@ -177,10 +176,9 @@ static int bdgr_key_encode(
 )
 {
     int err;
-    unsigned char* data;
     char* string_out;
     unsigned long int data_len = 2048, string_out_len;
-    data = malloc( 2048 );
+    unsigned char* data = malloc( data_len );
     if( type ) {
         err = bdgr_key_export_private( key, data, &data_len );
     } else {
@@ -750,7 +748,7 @@ static void bdgr_init()
         ltc_mp = gmp_desc;
         bdgr_scheme_handler_add( "id:", bdgr_scheme_id );
         bdgr_scheme_handler_add( "nmc:", bdgr_scheme_nmc );
-        bdgr_scheme_handler_add( "https:", bdgr_scheme_http );
         bdgr_scheme_handler_add( "http:", bdgr_scheme_http );
+        bdgr_scheme_handler_add( "https:", bdgr_scheme_http );
     }
 }

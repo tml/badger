@@ -7,7 +7,8 @@
 
 void usage()
 {
-    printf(
+    fprintf(
+        stderr,
         "Usage: badger_key\n"
         "Options:\n"
         "-p, --pass  <password>\n"
